@@ -38,6 +38,10 @@ from dask.dataframe.dask_expr._expr import (
     determine_column_projection,
     plain_column_projection,
 )
+from dask.dataframe.dask_expr._operation_callbacks import (
+    get_expr_operation_callbacks_spec,
+    set_expr_operation_callbacks_spec,
+)
 from dask.dataframe.dispatch import make_meta, meta_nonempty
 from dask.dataframe.utils import is_scalar
 from dask.typing import no_default
@@ -523,6 +527,9 @@ class ApplyConcatApply(Expr):
         chunked = self._chunk_cls(
             self.frame, type(self), chunk, chunk_kwargs, *self._chunk_cls_args
         )
+        callbacks_spec = get_expr_operation_callbacks_spec(self)
+        if callbacks_spec is not None:
+            chunked = set_expr_operation_callbacks_spec(chunked, callbacks_spec)
         if not self.should_shuffle:
             # Lower into TreeReduce(Chunk)
             return TreeReduce(

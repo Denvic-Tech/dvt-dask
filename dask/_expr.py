@@ -35,11 +35,31 @@ def _unpack_collections(o):
 
     if isinstance(o, Expr):
         return o
-
     if hasattr(o, "expr") and not isinstance(o, Delayed):
         return o.expr
     else:
         return o
+
+
+_OPERATION_CALLBACKS_ATTR = "__dvt_operation_callbacks_spec"
+
+
+def _get_operation_callbacks_spec(expr: "Expr"):
+    try:
+        return object.__getattribute__(expr, _OPERATION_CALLBACKS_ATTR)
+    except AttributeError:
+        return None
+
+
+def _copy_operation_callbacks_spec(source: "Expr", target: "Expr") -> "Expr":
+    spec = _get_operation_callbacks_spec(source)
+    if spec is not None and _get_operation_callbacks_spec(target) is None:
+        object.__setattr__(target, _OPERATION_CALLBACKS_ATTR, spec)
+    return target
+
+
+def _has_operation_callbacks_spec(expr: "Expr") -> bool:
+    return any(_get_operation_callbacks_spec(node) is not None for node in expr.walk())
 
 
 class Expr:
@@ -319,6 +339,8 @@ class Expr:
                 out = expr
             if not isinstance(out, Expr):
                 return out
+            if out is not expr:
+                out = _copy_operation_callbacks_spec(expr, out)
             if out._name != expr._name:
                 expr = out
                 continue
@@ -330,6 +352,8 @@ class Expr:
                     out = expr
                 if not isinstance(out, Expr):
                     return out
+                if out is not expr:
+                    out = _copy_operation_callbacks_spec(expr, out)
                 if out is not expr and out._name != expr._name:
                     expr = out
                     _continue = True
@@ -352,7 +376,7 @@ class Expr:
                 new_operands.append(new)
 
             if changed:
-                expr = type(expr)(*new_operands)
+                expr = _copy_operation_callbacks_spec(expr, type(expr)(*new_operands))
                 continue
             else:
                 break
@@ -390,6 +414,8 @@ class Expr:
                 out = expr
             if not isinstance(out, Expr):
                 return out
+            if out is not expr:
+                out = _copy_operation_callbacks_spec(expr, out)
             if out._name != expr._name:
                 expr = out
 
@@ -401,6 +427,8 @@ class Expr:
 
                 if not isinstance(out, Expr):
                     return out
+                if out is not expr:
+                    out = _copy_operation_callbacks_spec(expr, out)
                 if out is not expr and out._name != expr._name:
                     expr = out
                     break
@@ -423,7 +451,7 @@ class Expr:
                 new_operands.append(new)
 
             if changed:
-                expr = type(expr)(*new_operands)
+                expr = _copy_operation_callbacks_spec(expr, type(expr)(*new_operands))
 
             break
 
@@ -475,6 +503,8 @@ class Expr:
             out = expr
         if not isinstance(out, Expr):
             return out
+        if out is not expr:
+            out = _copy_operation_callbacks_spec(expr, out)
 
         # Lower all children
         new_operands = []
@@ -489,7 +519,7 @@ class Expr:
             new_operands.append(new)
 
         if changed:
-            out = type(out)(*new_operands)
+            out = _copy_operation_callbacks_spec(out, type(out)(*new_operands))
 
         # Cache the result and return
         return lowered.setdefault(self._name, out)
@@ -922,6 +952,7 @@ def optimize(expr: Expr, fuse: bool = True) -> Expr:
 
 def optimize_until(expr: Expr, stage: OptimizerStage) -> Expr:
     result = expr
+    has_operation_callbacks = _has_operation_callbacks_spec(result)
     if stage == "logical":
         return result
 
@@ -931,7 +962,7 @@ def optimize_until(expr: Expr, stage: OptimizerStage) -> Expr:
         return expr
 
     # Manipulate Expression to make it more efficient
-    if dask.config.get("optimization.tune.active", True):
+    if dask.config.get("optimization.tune.active", True) and not has_operation_callbacks:
         expr = expr.rewrite(kind="tune", rewritten={})
     if stage == "tuned-logical":
         return expr
@@ -947,7 +978,8 @@ def optimize_until(expr: Expr, stage: OptimizerStage) -> Expr:
         return expr
 
     # Final graph-specific optimizations
-    expr = expr.fuse()
+    if not has_operation_callbacks:
+        expr = expr.fuse()
     if stage == "fused":
         return expr
 

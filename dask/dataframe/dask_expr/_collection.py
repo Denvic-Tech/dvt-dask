@@ -33,7 +33,12 @@ from dask._collections import new_collection
 from dask._expr import OptimizerStage
 from dask._task_spec import Dict, TaskRef
 from dask.array import Array
-from dask.base import DaskMethodsMixin, is_dask_collection, named_schedulers
+from dask.base import (
+    DaskMethodsMixin,
+    get_scheduler,
+    is_dask_collection,
+    named_schedulers,
+)
 from dask.core import flatten
 from dask.dataframe import methods
 from dask.dataframe._compat import (
@@ -79,6 +84,12 @@ from dask.dataframe.dask_expr._expr import (
     no_default,
 )
 from dask.dataframe.dask_expr._merge import JoinRecursive, Merge
+from dask.dataframe.dask_expr._operation_callbacks import (
+    PublicOperationCallbacks,
+    build_operation_callbacks_spec,
+    collect_operation_callbacks_specs,
+    set_expr_operation_callbacks_spec,
+)
 from dask.dataframe.dask_expr._quantile import SeriesQuantile
 from dask.dataframe.dask_expr._quantiles import RepartitionQuantiles
 from dask.dataframe.dask_expr._reductions import (
@@ -297,6 +308,48 @@ def _wrap_unary_expr_op(self, op=None):
     return new_collection(getattr(self.expr, op)())
 
 
+def _apply_public_operation_callbacks(
+    result,
+    *,
+    operation_type: str,
+    on_start=None,
+    on_end=None,
+    on_partition=None,
+    metadata: dict[str, Any] | None = None,
+    operation_id: Any | None = None,
+):
+    spec = build_operation_callbacks_spec(
+        ddf_meta=result._meta,
+        operation_type=operation_type,
+        on_start=on_start,
+        on_end=on_end,
+        on_partition=on_partition,
+        metadata=metadata,
+        operation_id=operation_id,
+        operation_token=result.expr._name,
+    )
+    if spec is None:
+        return result
+    return new_collection(set_expr_operation_callbacks_spec(result.expr, spec))
+
+
+def _collect_public_operation_callbacks_specs(frame: "FrameBase"):
+    return collect_operation_callbacks_specs(frame.expr)
+
+
+def _ensure_public_callback_scheduler_supported(frame: "FrameBase", **kwargs) -> None:
+    scheduler = get_scheduler(scheduler=kwargs.get("scheduler"), collections=[frame])
+    if scheduler in (
+        named_schedulers["threads"],
+        named_schedulers["sync"],
+    ):
+        return
+    raise RuntimeError(
+        "Public operation callbacks only support local schedulers: "
+        "'threads', 'synchronous', or 'sync'."
+    )
+
+
 _WARN_ANNOTATIONS = True
 #
 # Collection classes
@@ -466,6 +519,15 @@ Expr={expr}"""
     def persist(self, fuse=True, **kwargs):
         out = self.optimize(fuse=fuse)
         return DaskMethodsMixin.persist(out, **kwargs)
+
+    def compute(self, **kwargs):
+        callback_specs = _collect_public_operation_callbacks_specs(self)
+        if not callback_specs:
+            return DaskMethodsMixin.compute(self, **kwargs)
+
+        _ensure_public_callback_scheduler_supported(self, **kwargs)
+        with PublicOperationCallbacks(callback_specs):
+            return DaskMethodsMixin.compute(self, **kwargs)
 
     def analyze(self, filename: str | None = None, format: str | None = None) -> None:
         """Outputs statistics about every node in the expression.
@@ -2872,6 +2934,11 @@ class DataFrame(FrameBase):
         shuffle_method=None,
         npartitions=None,
         broadcast=None,
+        on_start=None,
+        on_end=None,
+        on_partition=None,
+        metadata=None,
+        operation_id=None,
     ):
         """Merge the DataFrame with another DataFrame
 
@@ -2979,6 +3046,32 @@ class DataFrame(FrameBase):
             shuffle_method,
             npartitions=npartitions,
             broadcast=broadcast,
+            on_start=on_start,
+            on_end=on_end,
+            on_partition=on_partition,
+            metadata=metadata,
+            operation_id=operation_id,
+        )
+
+    def filter_rows(
+        self,
+        predicate,
+        *,
+        on_start=None,
+        on_end=None,
+        on_partition=None,
+        metadata=None,
+        operation_id=None,
+    ):
+        result = self[predicate]
+        return _apply_public_operation_callbacks(
+            result,
+            operation_type="filter_rows",
+            on_start=on_start,
+            on_end=on_end,
+            on_partition=on_partition,
+            metadata=metadata,
+            operation_id=operation_id,
         )
 
     @derived_from(pd.DataFrame)
@@ -5573,6 +5666,11 @@ def merge(
     shuffle_method=None,
     npartitions=None,
     broadcast=None,
+    on_start=None,
+    on_end=None,
+    on_partition=None,
+    metadata=None,
+    operation_id=None,
 ):
     for o in [on, left_on, right_on]:
         if isinstance(o, FrameBase):
@@ -5644,6 +5742,15 @@ def merge(
             _npartitions=npartitions,
             broadcast=broadcast,
         )
+    )
+    result = _apply_public_operation_callbacks(
+        result,
+        operation_type="merge",
+        on_start=on_start,
+        on_end=on_end,
+        on_partition=on_partition,
+        metadata=metadata,
+        operation_id=operation_id,
     )
     if left._meta.index.name != right._meta.index.name:
         return result.rename_axis(index=result._meta.index.name)

@@ -22,6 +22,12 @@ class Callback:
     ...     pass
     >>> def finish(dsk, state, failed):
     ...     pass
+    >>> def operation_start(op_meta, dsk, state):
+    ...     pass
+    >>> def partition_event(op_meta, dsk, state):
+    ...     pass
+    >>> def operation_end(op_meta, dsk, state):
+    ...     pass
 
     You may then construct a callback object with any number of them
 
@@ -50,7 +56,15 @@ class Callback:
     active: ClassVar[set[tuple[Callable | None, ...]]] = set()
 
     def __init__(
-        self, start=None, start_state=None, pretask=None, posttask=None, finish=None
+        self,
+        start=None,
+        start_state=None,
+        pretask=None,
+        posttask=None,
+        finish=None,
+        operation_start=None,
+        partition_event=None,
+        operation_end=None,
     ):
         if start:
             self._start = start
@@ -62,10 +76,25 @@ class Callback:
             self._posttask = posttask
         if finish:
             self._finish = finish
+        if operation_start:
+            self._operation_start = operation_start
+        if partition_event:
+            self._partition_event = partition_event
+        if operation_end:
+            self._operation_end = operation_end
 
     @property
     def _callback(self) -> tuple[Callable | None, ...]:
-        fields = ["_start", "_start_state", "_pretask", "_posttask", "_finish"]
+        fields = [
+            "_start",
+            "_start_state",
+            "_pretask",
+            "_posttask",
+            "_finish",
+            "_operation_start",
+            "_partition_event",
+            "_operation_end",
+        ]
         return tuple(getattr(self, i, None) for i in fields)
 
     def __enter__(self):
@@ -88,7 +117,7 @@ def unpack_callbacks(cbs):
     if cbs:
         return [[i for i in f if i] for f in zip(*cbs)]
     else:
-        return [(), (), (), (), ()]
+        return [(), (), (), (), (), (), (), ()]
 
 
 @contextmanager
@@ -112,7 +141,13 @@ def normalize_callback(cb):
     if isinstance(cb, Callback):
         return cb._callback
     elif isinstance(cb, tuple):
-        return cb
+        if len(cb) == 5:
+            return cb + (None, None, None)
+        if len(cb) == 8:
+            return cb
+        raise ValueError(
+            f"Expected callback tuple length 5 or 8, got {len(cb)}."
+        )
     else:
         raise TypeError("Callbacks must be either `Callback` or `tuple`")
 
@@ -122,7 +157,7 @@ class add_callbacks:
 
     Takes several callbacks and applies them only in the enclosed context.
     Callbacks can either be represented as a ``Callback`` object, or as a tuple
-    of length 4.
+    of length 5 (legacy) or 8 (extended).
 
     Examples
     --------

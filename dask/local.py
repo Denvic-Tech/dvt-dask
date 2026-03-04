@@ -111,13 +111,13 @@ from __future__ import annotations
 
 import os
 from collections import defaultdict
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from concurrent.futures import Executor, Future
 from functools import partial
 from queue import Empty, Queue
 
 from dask import config
-from dask._task_spec import DataNode, convert_legacy_graph
+from dask._task_spec import DataNode, OperationMeta, convert_legacy_graph
 from dask.callbacks import local_callbacks, unpack_callbacks
 from dask.core import flatten, get_dependencies
 from dask.order import order
@@ -360,6 +360,184 @@ def identity(x):
     return x
 
 
+def _validate_operation_meta(op_meta: OperationMeta, key: Key) -> None:
+    if op_meta.operation_id is None:
+        raise RuntimeError(f"Invalid operation metadata for {key!r}: operation_id is None")
+    if not isinstance(op_meta.operation_type, str) or not op_meta.operation_type:
+        raise RuntimeError(
+            f"Invalid operation metadata for {key!r}: operation_type must be a non-empty string"
+        )
+    if not isinstance(op_meta.partition_count, int) or op_meta.partition_count <= 0:
+        raise RuntimeError(
+            f"Invalid operation metadata for {key!r}: partition_count must be > 0"
+        )
+    if not isinstance(op_meta.operation_task_count, int) or op_meta.operation_task_count <= 0:
+        raise RuntimeError(
+            f"Invalid operation metadata for {key!r}: operation_task_count must be > 0"
+        )
+    if op_meta.operation_task_count < op_meta.partition_count:
+        raise RuntimeError(
+            f"Invalid operation metadata for {key!r}: operation_task_count "
+            f"({op_meta.operation_task_count}) < partition_count ({op_meta.partition_count})"
+        )
+    if not isinstance(op_meta.partition_idx, int):
+        raise RuntimeError(
+            f"Invalid operation metadata for {key!r}: partition_idx must be int"
+        )
+    if not (0 <= op_meta.partition_idx < op_meta.partition_count):
+        raise RuntimeError(
+            f"Invalid operation metadata for {key!r}: partition_idx={op_meta.partition_idx} "
+            f"out of range [0, {op_meta.partition_count})"
+        )
+
+
+def _resolve_operation_meta_for_key(
+    key: Key,
+    dsk: Mapping[Key, object],
+    operation_metadata_provider: Callable[[Key, object], OperationMeta | None] | None,
+    operation_metadata_by_key: Mapping[Key, OperationMeta] | None,
+) -> OperationMeta | None:
+    if operation_metadata_provider is not None:
+        return operation_metadata_provider(key, dsk[key])
+    if operation_metadata_by_key is not None:
+        return operation_metadata_by_key.get(key)
+    node = dsk[key]
+    return getattr(node, "op_meta", None)
+
+
+def _get_or_create_operation_state(
+    operation_states: dict,
+    op_meta: OperationMeta,
+    key: Key,
+) -> dict:
+    op_id = op_meta.operation_id
+    op_state = operation_states.get(op_id)
+    if op_state is None:
+        op_state = {
+            "operation_type": op_meta.operation_type,
+            "partition_count": op_meta.partition_count,
+            "operation_task_count": op_meta.operation_task_count,
+            "remaining": op_meta.operation_task_count,
+            "started": False,
+            "finished": False,
+            "start_count": 0,
+            "end_count": 0,
+            "seen_partitions": set(),
+        }
+        operation_states[op_id] = op_state
+        return op_state
+
+    if op_state["operation_type"] != op_meta.operation_type:
+        raise RuntimeError(
+            f"Conflicting operation_type for operation_id={op_id!r}: "
+            f"{op_state['operation_type']!r} != {op_meta.operation_type!r} (key={key!r})"
+        )
+    if op_state["partition_count"] != op_meta.partition_count:
+        raise RuntimeError(
+            f"Conflicting partition_count for operation_id={op_id!r}: "
+            f"{op_state['partition_count']} != {op_meta.partition_count} (key={key!r})"
+        )
+    if op_state["operation_task_count"] != op_meta.operation_task_count:
+        raise RuntimeError(
+            f"Conflicting operation_task_count for operation_id={op_id!r}: "
+            f"{op_state['operation_task_count']} != {op_meta.operation_task_count} (key={key!r})"
+        )
+    return op_state
+
+
+def _operation_on_pretask(
+    op_meta: OperationMeta,
+    key: Key,
+    dsk: Mapping[Key, object],
+    state: dict,
+    operation_states: dict,
+    operation_start_cbs: Sequence[Callable],
+) -> None:
+    if not isinstance(op_meta, OperationMeta):
+        raise RuntimeError(
+            f"Invalid operation metadata type for {key!r}: {type(op_meta).__name__}"
+        )
+    _validate_operation_meta(op_meta, key)
+    op_state = _get_or_create_operation_state(operation_states, op_meta, key)
+    if op_state["finished"]:
+        raise RuntimeError(
+            f"Operation {op_meta.operation_id!r} received pretask after finish (key={key!r})"
+        )
+    if not op_state["started"]:
+        op_state["started"] = True
+        op_state["start_count"] += 1
+        for cb in operation_start_cbs:
+            cb(op_meta, dsk, state)
+
+
+def _operation_on_posttask(
+    op_meta: OperationMeta,
+    key: Key,
+    dsk: Mapping[Key, object],
+    state: dict,
+    operation_states: dict,
+    partition_event_cbs: Sequence[Callable],
+    operation_end_cbs: Sequence[Callable],
+) -> None:
+    if not isinstance(op_meta, OperationMeta):
+        raise RuntimeError(
+            f"Invalid operation metadata type for {key!r}: {type(op_meta).__name__}"
+        )
+    _validate_operation_meta(op_meta, key)
+    op_state = _get_or_create_operation_state(operation_states, op_meta, key)
+    if not op_state["started"]:
+        raise RuntimeError(
+            f"Operation {op_meta.operation_id!r} received posttask before start (key={key!r})"
+        )
+    if op_state["finished"]:
+        raise RuntimeError(
+            f"Operation {op_meta.operation_id!r} received posttask after finish (key={key!r})"
+        )
+
+    partition_idx = op_meta.partition_idx
+    if partition_idx in op_state["seen_partitions"]:
+        raise RuntimeError(
+            f"Duplicate partition_event for operation_id={op_meta.operation_id!r}, "
+            f"partition_idx={partition_idx}"
+        )
+    op_state["seen_partitions"].add(partition_idx)
+    for cb in partition_event_cbs:
+        cb(op_meta, dsk, state)
+
+    op_state["remaining"] -= 1
+    if op_state["remaining"] < 0:
+        raise RuntimeError(
+            f"Operation {op_meta.operation_id!r} has negative remaining task count"
+        )
+
+    if op_state["remaining"] == 0:
+        op_state["finished"] = True
+        op_state["end_count"] += 1
+        for cb in operation_end_cbs:
+            cb(op_meta, dsk, state)
+
+
+def _validate_operation_states(operation_states: dict) -> None:
+    for op_id, op_state in operation_states.items():
+        if op_state["start_count"] != 1:
+            raise RuntimeError(
+                f"Operation {op_id!r} expected exactly one operation_start, got {op_state['start_count']}"
+            )
+        if op_state["end_count"] != 1:
+            raise RuntimeError(
+                f"Operation {op_id!r} expected exactly one operation_end, got {op_state['end_count']}"
+            )
+        if op_state["remaining"] != 0:
+            raise RuntimeError(
+                f"Operation {op_id!r} has remaining={op_state['remaining']} at scheduler finish"
+            )
+        if len(op_state["seen_partitions"]) != op_state["partition_count"]:
+            raise RuntimeError(
+                f"Operation {op_id!r} observed {len(op_state['seen_partitions'])} unique partition_event values; "
+                f"expected {op_state['partition_count']}"
+            )
+
+
 """
 Task Selection
 --------------
@@ -393,6 +571,8 @@ def get_async(
     dumps=identity,
     loads=identity,
     chunksize=None,
+    operation_metadata_provider: Callable[[Key, object], OperationMeta | None] | None = None,
+    operation_metadata_by_key: Mapping[Key, OperationMeta] | None = None,
     **kwargs,
 ):
     """Asynchronous get function
@@ -427,9 +607,10 @@ def get_async(
     raise_exception : callable, optional
         Function that takes an exception and a traceback, and raises an error.
     callbacks : tuple or list of tuples, optional
-        Callbacks are passed in as tuples of length 5. Multiple sets of
-        callbacks may be passed in as a list of tuples. For more information,
-        see the dask.diagnostics documentation.
+        Callbacks are passed in as tuples of length 8 (or length 5 for
+        legacy callbacks). Multiple sets of callbacks may be passed in as a
+        list of tuples. For more information, see the dask.diagnostics
+        documentation.
     dumps: callable, optional
         Function to serialize task data and results to communicate between
         worker and parent.  Defaults to identity.
@@ -438,6 +619,12 @@ def get_async(
     chunksize: int, optional
         Size of chunks to use when dispatching work. Defaults to 1.
         If -1, will be computed to evenly divide ready work across workers.
+    operation_metadata_provider : callable, optional
+        Callable receiving ``(key, task)`` and returning ``OperationMeta`` or
+        ``None``. Used to emit operation-level callback events.
+    operation_metadata_by_key : mapping, optional
+        Explicit ``{key: OperationMeta}`` mapping used to emit operation-level
+        callback events.
 
     See Also
     --------
@@ -456,9 +643,31 @@ def get_async(
     if not isinstance(dsk, Mapping):
         dsk = dsk.__dask_graph__()
     dsk = convert_legacy_graph(dsk)
+    if (
+        operation_metadata_provider is not None
+        and operation_metadata_by_key is not None
+    ):
+        raise RuntimeError(
+            "Cannot pass both operation_metadata_provider and operation_metadata_by_key."
+        )
+    if operation_metadata_provider is not None and not callable(
+        operation_metadata_provider
+    ):
+        raise TypeError("operation_metadata_provider must be callable")
     with local_callbacks(callbacks) as callbacks:
-        _, _, pretask_cbs, posttask_cbs, _ = unpack_callbacks(callbacks)
+        (
+            _,
+            _,
+            pretask_cbs,
+            posttask_cbs,
+            _,
+            operation_start_cbs,
+            partition_event_cbs,
+            operation_end_cbs,
+        ) = unpack_callbacks(callbacks)
         started_cbs = []
+        operation_states = {}
+        operation_meta_cache = {}
         succeeded = False
         # if start_state_from_dask fails, we will have something
         # to pass to the final block.
@@ -475,7 +684,7 @@ def get_async(
                 dsk, keys=results, cache=cache, sortkey=keyorder.get
             )
 
-            for _, start_state, _, _, _ in callbacks:
+            for _, start_state, *_ in callbacks:
                 if start_state:
                     start_state(dsk, state)
 
@@ -484,6 +693,16 @@ def get_async(
 
             if state["waiting"] and not state["ready"]:
                 raise ValueError("Found no accessible jobs in dask")
+
+            def get_operation_meta(key):
+                if key not in operation_meta_cache:
+                    operation_meta_cache[key] = _resolve_operation_meta_for_key(
+                        key,
+                        dsk,
+                        operation_metadata_provider,
+                        operation_metadata_by_key,
+                    )
+                return operation_meta_cache[key]
 
             def fire_tasks(chunksize):
                 """Fire off a task to the thread pool"""
@@ -504,6 +723,16 @@ def get_async(
                     key = state["ready"].pop()
                     # Notify task is running
                     state["running"].add(key)
+                    op_meta = get_operation_meta(key)
+                    if op_meta is not None:
+                        _operation_on_pretask(
+                            op_meta,
+                            key,
+                            dsk,
+                            state,
+                            operation_states,
+                            operation_start_cbs,
+                        )
                     for f in pretask_cbs:
                         f(key, dsk, state)
 
@@ -548,13 +777,25 @@ def get_async(
                     res, worker_id = loads(res_info)
                     state["cache"][key] = res
                     finish_task(dsk, key, state, results, keyorder.get)
+                    op_meta = get_operation_meta(key)
+                    if op_meta is not None:
+                        _operation_on_posttask(
+                            op_meta,
+                            key,
+                            dsk,
+                            state,
+                            operation_states,
+                            partition_event_cbs,
+                            operation_end_cbs,
+                        )
                     for f in posttask_cbs:
                         f(key, res, dsk, state, worker_id)
 
+            _validate_operation_states(operation_states)
             succeeded = True
 
         finally:
-            for _, _, _, _, finish in started_cbs:
+            for _, _, _, _, finish, *_ in started_cbs:
                 if finish:
                     finish(dsk, state, not succeeded)
 

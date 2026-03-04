@@ -57,8 +57,11 @@ should contain the dependencies of the task.
 import functools
 import itertools
 import sys
+from contextvars import ContextVar
+from contextlib import contextmanager
 from collections import defaultdict
 from collections.abc import Callable, Container, Iterable, Mapping, MutableMapping
+from dataclasses import dataclass
 from functools import lru_cache, partial
 from typing import Any, TypeVar, cast
 
@@ -67,6 +70,37 @@ from dask.typing import Key as KeyType
 from dask.utils import funcname, is_namedtuple_instance
 
 _T = TypeVar("_T")
+
+
+@dataclass(frozen=True)
+class OperationMeta:
+    operation_id: Any
+    operation_type: str
+    partition_idx: int
+    partition_count: int
+    operation_task_count: int
+
+
+_task_operation_metadata: ContextVar[
+    Mapping[KeyType, OperationMeta]
+    | Callable[[KeyType, Any], OperationMeta | None]
+    | None
+] = ContextVar("_task_operation_metadata", default=None)
+
+
+@contextmanager
+def task_operation_metadata(
+    metadata: (
+        Mapping[KeyType, OperationMeta]
+        | Callable[[KeyType, Any], OperationMeta | None]
+        | None
+    ),
+):
+    token = _task_operation_metadata.set(metadata)
+    try:
+        yield
+    finally:
+        _task_operation_metadata.reset(token)
 
 
 # Ported from more-itertools
@@ -259,18 +293,65 @@ def convert_legacy_task(
 def convert_legacy_graph(
     dsk: Mapping,
     all_keys: Container | None = None,
+    operation_metadata_provider: (
+        Mapping[KeyType, OperationMeta]
+        | Callable[[KeyType, Any], OperationMeta | None]
+        | None
+    ) = None,
 ):
     if all_keys is None:
         all_keys = set(dsk)
+    if operation_metadata_provider is None:
+        operation_metadata_provider = _task_operation_metadata.get()
     new_dsk = {}
     for k, arg in dsk.items():
         t = convert_legacy_task(k, arg, all_keys)
+        op_meta = _resolve_operation_metadata(operation_metadata_provider, k, arg)
         if isinstance(t, Alias) and t.target == k:
+            if op_meta is not None:
+                raise RuntimeError(
+                    f"Cannot attach operation metadata to alias node {k!r}."
+                )
             continue
         elif not isinstance(t, GraphNode):
+            if op_meta is not None:
+                raise RuntimeError(
+                    f"Cannot attach operation metadata to non-runnable node {k!r}."
+                )
             t = DataNode(k, t)
+        elif op_meta is not None:
+            if not isinstance(t, Task):
+                raise RuntimeError(
+                    f"Cannot attach operation metadata to non-runnable node {k!r}."
+                )
+            if t.op_meta is not None and t.op_meta != op_meta:
+                raise RuntimeError(
+                    f"Conflicting operation metadata for task {k!r}: "
+                    f"{t.op_meta!r} != {op_meta!r}"
+                )
+            t.op_meta = op_meta
         new_dsk[k] = t
     return new_dsk
+
+
+def _resolve_operation_metadata(
+    provider: (
+        Mapping[KeyType, OperationMeta]
+        | Callable[[KeyType, Any], OperationMeta | None]
+        | None
+    ),
+    key: KeyType,
+    task: Any,
+) -> OperationMeta | None:
+    if provider is None:
+        return None
+    if isinstance(provider, Mapping):
+        return provider.get(key)
+    if callable(provider):
+        return provider(key, task)
+    raise TypeError(
+        "operation metadata provider must be a mapping, callable, or None"
+    )
 
 
 def resolve_aliases(dsk: dict, keys: set, dependents: dict) -> dict:
@@ -637,6 +718,7 @@ class Task(GraphNode):
     func: Callable
     args: tuple
     kwargs: dict
+    op_meta: OperationMeta | None
     _data_producer: bool
     _token: str | None
     _is_coro: bool | None
@@ -651,6 +733,7 @@ class Task(GraphNode):
         /,
         *args: Any,
         _data_producer: bool = False,
+        op_meta: OperationMeta | None = None,
         **kwargs: Any,
     ):
         self.key = key
@@ -680,6 +763,7 @@ class Task(GraphNode):
         self._token = None
         self._repr = None
         self._data_producer = _data_producer
+        self.op_meta = op_meta
 
     @property
     def data_producer(self) -> bool:
@@ -689,11 +773,16 @@ class Task(GraphNode):
         return self.func == _execute_subgraph
 
     def copy(self):
+        extras = _extra_args(type(self))  # type: ignore[arg-type]
+        extra_kwargs = {
+            name: getattr(self, name) for name in extras if name not in {"key", "func"}
+        }
         return type(self)(
             self.key,
             self.func,
             *self.args,
             **self.kwargs,
+            **extra_kwargs,
         )
 
     def __hash__(self):

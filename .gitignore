@@ -29,3 +29,5 @@ env.yaml
 uv.lock
 dask/_version.py
 dev
+trash/
+tmp/

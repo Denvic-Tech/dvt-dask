@@ -20,6 +20,7 @@ from dask.dataframe.core import (
     is_series_like,
 )
 from dask.dataframe.dask_expr._collection import (
+    _apply_public_operation_callbacks,
     FrameBase,
     Index,
     Series,
@@ -1924,7 +1925,17 @@ class GroupBy:
 
     @_aggregate_docstring(based_on="pd.core.groupby.DataFrameGroupBy.agg")
     def aggregate(
-        self, arg=None, split_every=8, split_out=None, shuffle_method=None, **kwargs
+        self,
+        arg=None,
+        split_every=8,
+        split_out=None,
+        shuffle_method=None,
+        on_start=None,
+        on_end=None,
+        on_partition=None,
+        metadata=None,
+        operation_id=None,
+        **kwargs,
     ):
         relabeling, order, columns = None, None, None
         if arg is None:
@@ -1955,7 +1966,15 @@ class GroupBy:
             if order is not None:
                 result = result.iloc[:, order]
             result.columns = columns
-        return result
+        return _apply_public_operation_callbacks(
+            result,
+            operation_type="groupby.aggregate",
+            on_start=on_start,
+            on_end=on_end,
+            on_partition=on_partition,
+            metadata=metadata,
+            operation_id=operation_id,
+        )
 
     def agg(self, *args, **kwargs):
         return self.aggregate(*args, **kwargs)

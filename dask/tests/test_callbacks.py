@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from dask.callbacks import Callback
+from dask.callbacks import Callback, normalize_callback
 from dask.local import get_sync
 from dask.threaded import get as get_threaded
 from dask.utils_test import add
@@ -110,3 +110,22 @@ def test_add_remove_mutates_not_replaces():
         assert Callback.active
 
     assert not Callback.active
+
+
+def test_normalize_callback_legacy_tuple():
+    cb = (None, None, None, None, None)
+    normalized = normalize_callback(cb)
+    assert len(normalized) == 8
+    assert normalized[:5] == cb
+    assert normalized[5:] == (None, None, None)
+
+
+def test_normalize_callback_extended_tuple():
+    cb = (None, None, None, None, None, lambda *_: None, None, None)
+    normalized = normalize_callback(cb)
+    assert normalized == cb
+
+
+def test_normalize_callback_reject_invalid_tuple_length():
+    with pytest.raises(ValueError, match="length 5 or 8"):
+        normalize_callback((None, None, None))

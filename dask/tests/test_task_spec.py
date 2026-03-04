@@ -14,6 +14,7 @@ from dask._task_spec import (
     DependenciesMapping,
     Dict,
     List,
+    OperationMeta,
     Set,
     Task,
     TaskRef,
@@ -24,6 +25,7 @@ from dask._task_spec import (
     fuse_linear_task_spec,
     parse_input,
     resolve_aliases,
+    task_operation_metadata,
 )
 from dask.core import keys_in_tasks, reverse_dict
 from dask.sizeof import sizeof
@@ -64,6 +66,55 @@ def test_convert_legacy_dsk_skip_new():
     converted = convert_and_verify_keys(dsk)
     assert converted["key-1"] is dsk["key-1"]
     assert converted == dsk
+
+
+def test_convert_legacy_graph_operation_metadata_context():
+    op_meta = OperationMeta(
+        operation_id="op-1",
+        operation_type="test",
+        partition_idx=0,
+        partition_count=1,
+        operation_task_count=1,
+    )
+    dsk = {"x": (func, "a", "b")}
+    with task_operation_metadata({"x": op_meta}):
+        converted = convert_legacy_graph(dsk)
+    assert isinstance(converted["x"], Task)
+    assert converted["x"].op_meta == op_meta
+
+
+def test_convert_legacy_graph_operation_metadata_non_runnable_raises():
+    op_meta = OperationMeta(
+        operation_id="op-1",
+        operation_type="test",
+        partition_idx=0,
+        partition_count=1,
+        operation_task_count=1,
+    )
+    dsk = {"x": 1}
+    with task_operation_metadata({"x": op_meta}):
+        with pytest.raises(RuntimeError, match="non-runnable"):
+            convert_legacy_graph(dsk)
+
+
+def test_convert_legacy_graph_operation_metadata_provider():
+    op_meta = OperationMeta(
+        operation_id="op-2",
+        operation_type="test",
+        partition_idx=0,
+        partition_count=1,
+        operation_task_count=1,
+    )
+    dsk = {"x": (func, "a", "b")}
+
+    def provider(key, _task):
+        if key == "x":
+            return op_meta
+        return None
+
+    with task_operation_metadata(provider):
+        converted = convert_legacy_graph(dsk)
+    assert converted["x"].op_meta == op_meta
 
 
 def test_repr():

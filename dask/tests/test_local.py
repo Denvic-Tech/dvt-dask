@@ -3,7 +3,8 @@ from __future__ import annotations
 import pytest
 
 import dask
-from dask._task_spec import Task, TaskRef
+from dask._task_spec import OperationMeta, Task, TaskRef
+from dask.callbacks import Callback
 from dask.local import finish_task, get_sync, sortkey, start_state_from_dask
 from dask.order import order
 from dask.utils_test import GetFunctionTestMixin, add, inc
@@ -220,3 +221,96 @@ def test_detect_malformed_graph():
     with pytest.raises(ValueError, match="Missing dependency"):
         get_sync(dsk, "y")
     assert get_sync(dsk, "y", cache={"x": 1}) == 1
+
+
+def test_operation_event_hooks():
+    events = []
+    dsk = {
+        ("x", 0): Task(
+            ("x", 0),
+            lambda: 1,
+            op_meta=OperationMeta(
+                operation_id="op-1",
+                operation_type="test",
+                partition_idx=0,
+                partition_count=1,
+                operation_task_count=1,
+            ),
+        )
+    }
+
+    with Callback(
+        operation_start=lambda op_meta, *_: events.append(
+            ("start", op_meta.operation_id)
+        ),
+        partition_event=lambda op_meta, *_: events.append(
+            ("partition", op_meta.partition_idx)
+        ),
+        operation_end=lambda op_meta, *_: events.append(("end", op_meta.operation_id)),
+    ):
+        assert get_sync(dsk, ("x", 0)) == 1
+
+    assert events == [("start", "op-1"), ("partition", 0), ("end", "op-1")]
+
+
+def test_operation_event_duplicate_partition_raises():
+    dsk = {
+        ("x", 0): Task(
+            ("x", 0),
+            lambda: 1,
+            op_meta=OperationMeta(
+                operation_id="op-dup",
+                operation_type="test",
+                partition_idx=0,
+                partition_count=2,
+                operation_task_count=2,
+            ),
+        ),
+        ("x", 1): Task(
+            ("x", 1),
+            lambda: 2,
+            op_meta=OperationMeta(
+                operation_id="op-dup",
+                operation_type="test",
+                partition_idx=0,
+                partition_count=2,
+                operation_task_count=2,
+            ),
+        ),
+    }
+
+    with pytest.raises(RuntimeError, match="Duplicate partition_event"):
+        get_sync(dsk, [("x", 0), ("x", 1)])
+
+
+def test_operation_event_invalid_partition_meta_raises():
+    dsk = {
+        ("x", 0): Task(
+            ("x", 0),
+            lambda: 1,
+            op_meta=OperationMeta(
+                operation_id="op-invalid",
+                operation_type="test",
+                partition_idx=3,
+                partition_count=1,
+                operation_task_count=1,
+            ),
+        )
+    }
+
+    with pytest.raises(RuntimeError, match="partition_idx"):
+        get_sync(dsk, ("x", 0))
+
+
+def test_operation_metadata_provider_conflict_raises():
+    dsk = {"x": Task("x", lambda: 1)}
+    with pytest.raises(
+        RuntimeError,
+        match="Cannot pass both operation_metadata_provider and operation_metadata_by_key",
+    ):
+        get_sync(
+            dsk,
+            "x",
+            operation_metadata_provider=lambda *_: None,
+            operation_metadata_by_key={},
+        )

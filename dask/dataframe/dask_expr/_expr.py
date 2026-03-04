@@ -19,7 +19,7 @@ from tlz import merge_sorted, partition, unique
 from dask import _expr as core
 from dask._expr import Expr as BaseExpr
 from dask._expr import FinalizeCompute
-from dask._task_spec import Alias, DataNode, Task, TaskRef, execute_graph
+from dask._task_spec import Alias, DataNode, OperationMeta, Task, TaskRef, execute_graph
 from dask.array import Array
 from dask.base import collections_to_expr
 from dask.core import flatten
@@ -42,6 +42,9 @@ from dask.dataframe.dask_expr._util import (
     _calc_maybe_new_divisions,
     _convert_to_list,
     _tokenize_partial,
+)
+from dask.dataframe.dask_expr._operation_callbacks import (
+    get_expr_operation_callbacks_spec,
 )
 from dask.dataframe.dispatch import make_meta, meta_nonempty
 from dask.dataframe.rolling import CombinedOutput, _head_timedelta, overlap_chunk
@@ -500,6 +503,12 @@ class Expr(core.SingletonExpr):
     def dtypes(self):
         return self._meta.dtypes
 
+    def _operation_meta(self, index: int) -> OperationMeta | None:
+        spec = get_expr_operation_callbacks_spec(self)
+        if spec is None:
+            return None
+        return spec.to_operation_meta(index, self.npartitions)
+
     def _filter_simplification(self, parent, predicate=None):
         if predicate is None:
             predicate = parent.predicate.substitute(self, self.frame)
@@ -633,12 +642,21 @@ class Blockwise(Expr):
         task: tuple
         """
         args = [self._blockwise_arg(op, index) for op in self._args]
+        op_meta = self._operation_meta(index)
         if self._kwargs:
-            return Task(name, self.operation, *args, **self._kwargs)  # type: ignore[arg-type]
+            return Task(
+                name,
+                self.operation,
+                *args,
+                op_meta=op_meta,
+                **self._kwargs,
+            )  # type: ignore[arg-type]
         else:
-            return Task(name, self.operation, *args)  # type: ignore[arg-type]
+            return Task(name, self.operation, *args, op_meta=op_meta)  # type: ignore[arg-type]
 
     def _simplify_up(self, parent, dependents):
+        if get_expr_operation_callbacks_spec(self) is not None:
+            return
         if self._projection_passthrough and isinstance(parent, Projection):
             return plain_column_projection(self, parent, dependents)
 

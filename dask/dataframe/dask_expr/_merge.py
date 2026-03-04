@@ -7,7 +7,7 @@ import operator
 import numpy as np
 from toolz import merge_sorted, unique
 
-from dask._task_spec import Task, TaskRef
+from dask._task_spec import List, Task, TaskRef
 from dask.dataframe.dask_expr._expr import (  # noqa: F401
     And,
     Binop,
@@ -25,6 +25,10 @@ from dask.dataframe.dask_expr._expr import (  # noqa: F401
     are_co_aligned,
     determine_column_projection,
     is_filter_pushdown_available,
+)
+from dask.dataframe.dask_expr._operation_callbacks import (
+    get_expr_operation_callbacks_spec,
+    set_expr_operation_callbacks_spec,
 )
 from dask.dataframe.dask_expr._repartition import Repartition
 from dask.dataframe.dask_expr._shuffle import (
@@ -285,6 +289,7 @@ class Merge(Expr):
 
     def _lower(self):
         # Lower from an abstract expression
+        callbacks_spec = get_expr_operation_callbacks_spec(self)
         left = self.left
         right = self.right
         left_on = self.left_on
@@ -304,7 +309,10 @@ class Merge(Expr):
 
         # Check for "trivial" broadcast (single partition)
         if self._is_single_partition_broadcast:
-            return BlockwiseMerge(left, right, **self.kwargs)
+            return set_expr_operation_callbacks_spec(
+                BlockwiseMerge(left, right, **self.kwargs),
+                callbacks_spec,
+            )
 
         # NOTE: Merging on an index is fragile. Pandas behavior
         # depends on the actual data, and so we cannot use `meta`
@@ -354,16 +362,19 @@ class Merge(Expr):
                             npartitions_out=right.npartitions,
                         )
 
-                return BroadcastJoin(
-                    left,
-                    right,
-                    self.how,
-                    left_on,
-                    right_on,
-                    left_index,
-                    right_index,
-                    self.suffixes,
-                    self.indicator,
+                return set_expr_operation_callbacks_spec(
+                    BroadcastJoin(
+                        left,
+                        right,
+                        self.how,
+                        left_on,
+                        right_on,
+                        left_index,
+                        right_index,
+                        self.suffixes,
+                        self.indicator,
+                    ),
+                    callbacks_spec,
                 )
 
         shuffle_npartitions = self.operand("_npartitions") or max(
@@ -376,19 +387,22 @@ class Merge(Expr):
             and not left_already_partitioned
             and not right_already_partitioned
         ):
-            return HashJoinP2P(
-                left,
-                right,
-                how=self.how,
-                left_on=left_on,
-                right_on=right_on,
-                suffixes=self.suffixes,
-                indicator=self.indicator,
-                left_index=left_index,
-                right_index=right_index,
-                shuffle_left_on=shuffle_left_on,
-                shuffle_right_on=shuffle_right_on,
-                _npartitions=shuffle_npartitions,
+            return set_expr_operation_callbacks_spec(
+                HashJoinP2P(
+                    left,
+                    right,
+                    how=self.how,
+                    left_on=left_on,
+                    right_on=right_on,
+                    suffixes=self.suffixes,
+                    indicator=self.indicator,
+                    left_index=left_index,
+                    right_index=right_index,
+                    shuffle_left_on=shuffle_left_on,
+                    shuffle_right_on=shuffle_right_on,
+                    _npartitions=shuffle_npartitions,
+                ),
+                callbacks_spec,
             )
         if shuffle_left_on and not (
             left_already_partitioned and self.left.npartitions == shuffle_npartitions
@@ -415,9 +429,14 @@ class Merge(Expr):
             )
 
         # Blockwise merge
-        return BlockwiseMerge(left, right, **self.kwargs)
+        return set_expr_operation_callbacks_spec(
+            BlockwiseMerge(left, right, **self.kwargs),
+            callbacks_spec,
+        )
 
     def _simplify_up(self, parent, dependents):
+        if get_expr_operation_callbacks_spec(self) is not None:
+            return
         if isinstance(parent, Filter):
             if not self._filter_passthrough_available(parent, dependents):
                 return
@@ -672,6 +691,7 @@ class HashJoinP2P(Merge, PartitionsFiltered):
                 self.left_index,
                 self.right_index,
                 self.indicator,
+                op_meta=self._operation_meta(part_out),
             )
             dsk[t.key] = t
         return dsk
@@ -784,7 +804,12 @@ class BroadcastJoin(Merge, PartitionsFiltered):
                     kwargs,
                 )
                 _concat_list.append(inter_key)
-            dsk[(self._name, part_out)] = (_concat_wrapper, _concat_list)  # type: ignore[assignment]
+            dsk[(self._name, part_out)] = Task(
+                (self._name, part_out),
+                _concat_wrapper,
+                List(*(TaskRef(inter_key) for inter_key in _concat_list)),
+                op_meta=self._operation_meta(part_out),
+            )
         return dsk
 
 
@@ -829,7 +854,10 @@ class SemiMerge(Merge):
     def _lower(self):
         # This is cheap and avoids shuffling unnecessary data
         right = DropDuplicatesBlockwise(self.right)
-        return Merge(self.left, right, *self.operands[2:])
+        return set_expr_operation_callbacks_spec(
+            Merge(self.left, right, *self.operands[2:]),
+            get_expr_operation_callbacks_spec(self),
+        )
 
 
 class BlockwiseMerge(Merge, Blockwise):
@@ -900,6 +928,7 @@ class BlockwiseMerge(Merge, Blockwise):
             merge_chunk,
             self._blockwise_arg(self.left, index),
             self._blockwise_arg(self.right, index),
+            op_meta=self._operation_meta(index),
             **kwargs,
         )
 
