@@ -239,6 +239,145 @@ def test_operation_callbacks_on_error_public_api():
     assert isinstance(columns, tuple)
 
 
+def test_add_callbacks_chainable_api_end_to_end():
+    orders_pdf = pd.DataFrame(
+        {
+            "order_id": list(range(40)),
+            "product_id": [1, 2, 3, 4] * 10,
+            "amount": [1.0, 2.0, 3.0, 4.0] * 10,
+        }
+    )
+    products_pdf = pd.DataFrame(
+        {
+            "product_id": [1, 2, 3, 4],
+            "category": ["A", "A", "B", "C"],
+            "price": [10.0, 20.0, 7.5, 99.0],
+        }
+    )
+
+    orders = from_pandas(orders_pdf, npartitions=4)
+    products = from_pandas(products_pdf, npartitions=1)
+
+    events = {"start": [], "end": [], "partition": []}
+
+    def on_start(ddf_meta, operation_id, marker):
+        events["start"].append((operation_id, marker, tuple(ddf_meta.columns)))
+
+    def on_end(ddf_meta, operation_id, marker):
+        events["end"].append((operation_id, marker, tuple(ddf_meta.columns)))
+
+    def on_partition(df_partition, operation_id, marker, partition_info):
+        events["partition"].append(
+            (
+                operation_id,
+                marker,
+                partition_info["number"],
+                partition_info["partition_count"],
+                partition_info["stage"],
+            )
+        )
+        if hasattr(df_partition, "__setitem__") and getattr(df_partition, "ndim", 0) == 2:
+            df_partition["__callback_mutation__"] = 1
+
+    ddf = merge(orders, products, on="product_id").add_callbacks(
+        on_start=on_start,
+        on_end=on_end,
+        on_partition=on_partition,
+        operation_id="merge_orders_products_v2",
+        metadata={"marker": "merge"},
+    )
+    ddf = ddf.filter_rows(ddf["amount"] > 1).add_callbacks(
+        on_start=on_start,
+        on_end=on_end,
+        on_partition=on_partition,
+        operation_id="filter_amount_gt_1_v2",
+        metadata={"marker": "filter"},
+    )
+    ddf = ddf.groupby("category").agg(
+        {"amount": ["mean"], "price": ["mean"]}
+    ).add_callbacks(
+        on_start=on_start,
+        on_end=on_end,
+        on_partition=on_partition,
+        operation_id="agg_by_category_v2",
+        metadata={"marker": "agg"},
+    )
+
+    expected_pd = orders_pdf.merge(products_pdf, on="product_id")
+    expected_pd = expected_pd[expected_pd["amount"] > 1]
+    expected_pd = expected_pd.groupby("category").agg(
+        {"amount": ["mean"], "price": ["mean"]}
+    )
+    result = ddf.compute(scheduler="threads")
+    assert_eq(result, expected_pd)
+
+    for operation_id in [
+        "merge_orders_products_v2",
+        "filter_amount_gt_1_v2",
+        "agg_by_category_v2",
+    ]:
+        starts = [e for e in events["start"] if e[0] == operation_id]
+        ends = [e for e in events["end"] if e[0] == operation_id]
+        partitions = [e for e in events["partition"] if e[0] == operation_id]
+        assert len(starts) == 1
+        assert len(ends) == 1
+        assert partitions
+        partition_count_values = {p[3] for p in partitions}
+        assert len(partition_count_values) == 1
+        partition_count = partition_count_values.pop()
+        assert len({p[2] for p in partitions}) == partition_count
+        assert all(p[4] == "finish" for p in partitions)
+
+
+def test_add_callbacks_chainable_api_on_error():
+    pdf = pd.DataFrame({"a": [1, 2, 3, 4]})
+    ddf = from_pandas(pdf, npartitions=2)
+
+    events = {"start": 0, "end": 0, "error": []}
+
+    def on_start(ddf_meta, operation_id, marker):
+        assert hasattr(ddf_meta, "columns")
+        assert operation_id == "filter_bad_predicate_v2"
+        assert marker == "bad_predicate"
+        events["start"] += 1
+
+    def on_end(ddf_meta, operation_id, marker):
+        events["end"] += 1
+
+    def on_error(ddf_meta, operation_id, exc, marker):
+        events["error"].append(
+            (
+                operation_id,
+                marker,
+                type(exc).__name__,
+                tuple(ddf_meta.columns),
+            )
+        )
+
+    bad = (
+        ddf.filter_rows(ddf["a"])
+        .add_callbacks(
+            on_start=on_start,
+            on_end=on_end,
+            on_error=on_error,
+            operation_id="filter_bad_predicate_v2",
+            metadata={"marker": "bad_predicate"},
+        )
+    )
+
+    with pytest.raises(KeyError):
+        bad.compute(scheduler="threads")
+
+    assert events["start"] == 1
+    assert events["end"] == 0
+    assert len(events["error"]) == 1
+    operation_id, marker, exc_name, columns = events["error"][0]
+    assert operation_id == "filter_bad_predicate_v2"
+    assert marker == "bad_predicate"
+    assert exc_name == "KeyError"
+    assert isinstance(columns, tuple)
+
+
 def test_operation_callback_specs_survive_optimization_and_skip_fusion():
     left_pdf = pd.DataFrame({"k": [1, 2, 3, 4], "v1": [1, 2, 3, 4]})
     right_pdf = pd.DataFrame({"k": [1, 2, 3, 4], "v2": [10, 20, 30, 40]})

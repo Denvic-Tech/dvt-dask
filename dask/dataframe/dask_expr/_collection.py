@@ -335,6 +335,13 @@ def _apply_public_operation_callbacks(
     return new_collection(set_expr_operation_callbacks_spec(result.expr, spec))
 
 
+def _infer_callback_operation_type(result: "FrameBase") -> str:
+    operation_type = getattr(result.expr, "_funcname", None)
+    if isinstance(operation_type, str) and operation_type:
+        return operation_type
+    return type(result.expr).__name__.lower()
+
+
 def _collect_public_operation_callbacks_specs(frame: "FrameBase"):
     return collect_operation_callbacks_specs(frame.expr)
 
@@ -530,6 +537,29 @@ Expr={expr}"""
         _ensure_public_callback_scheduler_supported(self, **kwargs)
         with PublicOperationCallbacks(callback_specs):
             return DaskMethodsMixin.compute(self, **kwargs)
+
+    def add_callbacks(
+        self,
+        *,
+        on_start=None,
+        on_end=None,
+        on_partition=None,
+        on_error=None,
+        metadata: dict[str, Any] | None = None,
+        operation_id: Any | None = None,
+        operation_type: str | None = None,
+    ):
+        operation_type = operation_type or _infer_callback_operation_type(self)
+        return _apply_public_operation_callbacks(
+            self,
+            operation_type=operation_type,
+            on_start=on_start,
+            on_end=on_end,
+            on_partition=on_partition,
+            on_error=on_error,
+            metadata=metadata,
+            operation_id=operation_id,
+        )
 
     def analyze(self, filename: str | None = None, format: str | None = None) -> None:
         """Outputs statistics about every node in the expression.
