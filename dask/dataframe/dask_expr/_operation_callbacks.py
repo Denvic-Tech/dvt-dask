@@ -8,7 +8,7 @@ from dask.callbacks import Callback
 from dask.tokenize import _tokenize_deterministic
 
 _OPERATION_CALLBACKS_ATTR = "__dvt_operation_callbacks_spec"
-_RESERVED_METADATA_KEYS = {"ddf_meta", "operation_id", "partition_info"}
+_RESERVED_METADATA_KEYS = {"ddf_meta", "operation_id", "partition_info", "exc"}
 
 
 def _get_operation_callbacks_spec(expr) -> OperationCallbacksSpec | None:
@@ -49,6 +49,7 @@ class OperationCallbacksSpec:
     on_start: Any | None = None
     on_end: Any | None = None
     on_partition: Any | None = None
+    on_error: Any | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
 
     def to_operation_meta(self, partition_idx: int, partition_count: int) -> OperationMeta:
@@ -66,6 +67,7 @@ class OperationCallbacksSpec:
             id(self.on_start),
             id(self.on_end),
             id(self.on_partition),
+            id(self.on_error),
             _tokenize_deterministic(self.ddf_meta, self.metadata),
         )
 
@@ -77,6 +79,7 @@ def build_operation_callbacks_spec(
     on_start: Any | None = None,
     on_end: Any | None = None,
     on_partition: Any | None = None,
+    on_error: Any | None = None,
     metadata: dict[str, Any] | None = None,
     operation_id: Any | None = None,
     operation_token: Any | None = None,
@@ -99,7 +102,12 @@ def build_operation_callbacks_spec(
             + ", ".join(sorted(reserved))
         )
 
-    if on_start is None and on_end is None and on_partition is None:
+    if (
+        on_start is None
+        and on_end is None
+        and on_partition is None
+        and on_error is None
+    ):
         return None
 
     if operation_id is None:
@@ -113,6 +121,7 @@ def build_operation_callbacks_spec(
         on_start=on_start,
         on_end=on_end,
         on_partition=on_partition,
+        on_error=on_error,
         metadata=metadata_dict,
     )
 
@@ -199,6 +208,17 @@ class PublicOperationCallbacks(Callback):
         spec.on_end(
             _safe_copy(spec.ddf_meta),
             spec.operation_id,
+            **spec.metadata,
+        )
+
+    def _operation_error(self, op_meta: OperationMeta, exc: BaseException, dsk, state):
+        spec = self._spec_for_operation_id(op_meta.operation_id)
+        if spec.on_error is None:
+            return
+        spec.on_error(
+            _safe_copy(spec.ddf_meta),
+            spec.operation_id,
+            exc,
             **spec.metadata,
         )
 

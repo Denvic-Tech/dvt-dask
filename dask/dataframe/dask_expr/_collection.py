@@ -315,6 +315,7 @@ def _apply_public_operation_callbacks(
     on_start=None,
     on_end=None,
     on_partition=None,
+    on_error=None,
     metadata: dict[str, Any] | None = None,
     operation_id: Any | None = None,
 ):
@@ -324,6 +325,7 @@ def _apply_public_operation_callbacks(
         on_start=on_start,
         on_end=on_end,
         on_partition=on_partition,
+        on_error=on_error,
         metadata=metadata,
         operation_id=operation_id,
         operation_token=result.expr._name,
@@ -2937,6 +2939,7 @@ class DataFrame(FrameBase):
         on_start=None,
         on_end=None,
         on_partition=None,
+        on_error=None,
         metadata=None,
         operation_id=None,
     ):
@@ -3049,6 +3052,7 @@ class DataFrame(FrameBase):
             on_start=on_start,
             on_end=on_end,
             on_partition=on_partition,
+            on_error=on_error,
             metadata=metadata,
             operation_id=operation_id,
         )
@@ -3060,6 +3064,7 @@ class DataFrame(FrameBase):
         on_start=None,
         on_end=None,
         on_partition=None,
+        on_error=None,
         metadata=None,
         operation_id=None,
     ):
@@ -3070,6 +3075,7 @@ class DataFrame(FrameBase):
             on_start=on_start,
             on_end=on_end,
             on_partition=on_partition,
+            on_error=on_error,
             metadata=metadata,
             operation_id=operation_id,
         )
@@ -5669,6 +5675,7 @@ def merge(
     on_start=None,
     on_end=None,
     on_partition=None,
+    on_error=None,
     metadata=None,
     operation_id=None,
 ):
@@ -5749,6 +5756,7 @@ def merge(
         on_start=on_start,
         on_end=on_end,
         on_partition=on_partition,
+        on_error=on_error,
         metadata=metadata,
         operation_id=operation_id,
     )

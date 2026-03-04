@@ -47,6 +47,23 @@ def test_build_operation_callbacks_spec():
             metadata=["bad"],  # type: ignore[arg-type]
         )
 
+    spec_error_only = build_operation_callbacks_spec(
+        ddf_meta=meta,
+        operation_type="merge",
+        on_error=_noop,
+        metadata={"node_id": "merge_error"},
+        operation_token="token-err",
+    )
+    assert spec_error_only is not None
+
+    with pytest.raises(ValueError, match="reserved keys"):
+        build_operation_callbacks_spec(
+            ddf_meta=meta,
+            operation_type="merge",
+            on_error=_noop,
+            metadata={"exc": "bad"},
+        )
+
 
 def test_collect_operation_callbacks_specs_and_conflicts():
     pdf = pd.DataFrame({"a": [1, 2, 3], "b": [1, 2, 3]})
@@ -173,6 +190,53 @@ def test_operation_callbacks_end_to_end_and_result_safety():
         partition_count = partition_count_values.pop()
         assert len({p[2] for p in partitions}) == partition_count
         assert all(p[4] == "finish" for p in partitions)
+
+
+def test_operation_callbacks_on_error_public_api():
+    pdf = pd.DataFrame({"a": [1, 2, 3, 4]})
+    ddf = from_pandas(pdf, npartitions=2)
+
+    events = {"start": 0, "end": 0, "error": []}
+
+    def on_start(ddf_meta, operation_id, marker):
+        assert hasattr(ddf_meta, "columns")
+        assert operation_id == "filter_bad_predicate"
+        assert marker == "bad_predicate"
+        events["start"] += 1
+
+    def on_end(ddf_meta, operation_id, marker):
+        events["end"] += 1
+
+    def on_error(ddf_meta, operation_id, exc, marker):
+        events["error"].append(
+            (
+                operation_id,
+                marker,
+                type(exc).__name__,
+                tuple(ddf_meta.columns),
+            )
+        )
+
+    bad = ddf.filter_rows(
+        ddf["a"],
+        on_start=on_start,
+        on_end=on_end,
+        on_error=on_error,
+        operation_id="filter_bad_predicate",
+        metadata={"marker": "bad_predicate"},
+    )
+
+    with pytest.raises(KeyError):
+        bad.compute(scheduler="threads")
+
+    assert events["start"] == 1
+    assert events["end"] == 0
+    assert len(events["error"]) == 1
+    operation_id, marker, exc_name, columns = events["error"][0]
+    assert operation_id == "filter_bad_predicate"
+    assert marker == "bad_predicate"
+    assert exc_name == "KeyError"
+    assert isinstance(columns, tuple)
 
 
 def test_operation_callback_specs_survive_optimization_and_skip_fusion():

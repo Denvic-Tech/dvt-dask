@@ -283,6 +283,37 @@ def test_operation_event_duplicate_partition_raises():
         get_sync(dsk, [("x", 0), ("x", 1)])
 
 
+def test_operation_error_hook():
+    events = []
+    dsk = {
+        ("x", 0): Task(
+            ("x", 0),
+            lambda: (_ for _ in ()).throw(ValueError("boom")),
+            op_meta=OperationMeta(
+                operation_id="op-error",
+                operation_type="test",
+                partition_idx=0,
+                partition_count=1,
+                operation_task_count=1,
+            ),
+        )
+    }
+
+    with pytest.raises(ValueError, match="boom"):
+        with Callback(
+            operation_start=lambda op_meta, *_: events.append(
+                ("start", op_meta.operation_id)
+            ),
+            operation_end=lambda op_meta, *_: events.append(("end", op_meta.operation_id)),
+            operation_error=lambda op_meta, exc, *_: events.append(
+                ("error", op_meta.operation_id, str(exc))
+            ),
+        ):
+            get_sync(dsk, ("x", 0))
+
+    assert events == [("start", "op-error"), ("error", "op-error", "boom")]
+
+
 def test_operation_event_invalid_partition_meta_raises():
     dsk = {
         ("x", 0): Task(

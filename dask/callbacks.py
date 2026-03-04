@@ -28,6 +28,8 @@ class Callback:
     ...     pass
     >>> def operation_end(op_meta, dsk, state):
     ...     pass
+    >>> def operation_error(op_meta, exc, dsk, state):
+    ...     pass
 
     You may then construct a callback object with any number of them
 
@@ -65,6 +67,7 @@ class Callback:
         operation_start=None,
         partition_event=None,
         operation_end=None,
+        operation_error=None,
     ):
         if start:
             self._start = start
@@ -82,6 +85,8 @@ class Callback:
             self._partition_event = partition_event
         if operation_end:
             self._operation_end = operation_end
+        if operation_error:
+            self._operation_error = operation_error
 
     @property
     def _callback(self) -> tuple[Callable | None, ...]:
@@ -94,6 +99,7 @@ class Callback:
             "_operation_start",
             "_partition_event",
             "_operation_end",
+            "_operation_error",
         ]
         return tuple(getattr(self, i, None) for i in fields)
 
@@ -117,7 +123,7 @@ def unpack_callbacks(cbs):
     if cbs:
         return [[i for i in f if i] for f in zip(*cbs)]
     else:
-        return [(), (), (), (), (), (), (), ()]
+        return [(), (), (), (), (), (), (), (), ()]
 
 
 @contextmanager
@@ -142,11 +148,13 @@ def normalize_callback(cb):
         return cb._callback
     elif isinstance(cb, tuple):
         if len(cb) == 5:
-            return cb + (None, None, None)
+            return cb + (None, None, None, None)
         if len(cb) == 8:
+            return cb + (None,)
+        if len(cb) == 9:
             return cb
         raise ValueError(
-            f"Expected callback tuple length 5 or 8, got {len(cb)}."
+            f"Expected callback tuple length 5, 8, or 9, got {len(cb)}."
         )
     else:
         raise TypeError("Callbacks must be either `Callback` or `tuple`")
@@ -157,13 +165,14 @@ class add_callbacks:
 
     Takes several callbacks and applies them only in the enclosed context.
     Callbacks can either be represented as a ``Callback`` object, or as a tuple
-    of length 5 (legacy) or 8 (extended).
+    of length 5 (legacy), 8 (extended without operation-error hook),
+    or 9 (extended).
 
     Examples
     --------
     >>> def pretask(key, dsk, state):
     ...     print("Now running {0}").format(key)
-    >>> callbacks = (None, pretask, None, None)
+    >>> callbacks = (None, None, pretask, None, None)
     >>> with add_callbacks(callbacks):    # doctest: +SKIP
     ...     res.compute()
     """

@@ -420,8 +420,10 @@ def _get_or_create_operation_state(
             "remaining": op_meta.operation_task_count,
             "started": False,
             "finished": False,
+            "errored": False,
             "start_count": 0,
             "end_count": 0,
+            "error_count": 0,
             "seen_partitions": set(),
         }
         operation_states[op_id] = op_state
@@ -517,6 +519,39 @@ def _operation_on_posttask(
             cb(op_meta, dsk, state)
 
 
+def _operation_on_error(
+    op_meta: OperationMeta,
+    key: Key,
+    exc: BaseException,
+    dsk: Mapping[Key, object],
+    state: dict,
+    operation_states: dict,
+    operation_error_cbs: Sequence[Callable],
+) -> None:
+    if not isinstance(op_meta, OperationMeta):
+        raise RuntimeError(
+            f"Invalid operation metadata type for {key!r}: {type(op_meta).__name__}"
+        )
+    _validate_operation_meta(op_meta, key)
+    op_state = _get_or_create_operation_state(operation_states, op_meta, key)
+    if not op_state["started"]:
+        raise RuntimeError(
+            f"Operation {op_meta.operation_id!r} received operation_error before start (key={key!r})"
+        )
+    if op_state["finished"]:
+        raise RuntimeError(
+            f"Operation {op_meta.operation_id!r} received operation_error after finish (key={key!r})"
+        )
+    if op_state["errored"]:
+        raise RuntimeError(
+            f"Duplicate operation_error for operation_id={op_meta.operation_id!r}"
+        )
+    op_state["errored"] = True
+    op_state["error_count"] += 1
+    for cb in operation_error_cbs:
+        cb(op_meta, exc, dsk, state)
+
+
 def _validate_operation_states(operation_states: dict) -> None:
     for op_id, op_state in operation_states.items():
         if op_state["start_count"] != 1:
@@ -535,6 +570,10 @@ def _validate_operation_states(operation_states: dict) -> None:
             raise RuntimeError(
                 f"Operation {op_id!r} observed {len(op_state['seen_partitions'])} unique partition_event values; "
                 f"expected {op_state['partition_count']}"
+            )
+        if op_state["error_count"] != 0 or op_state["errored"]:
+            raise RuntimeError(
+                f"Operation {op_id!r} has unexpected operation_error events in successful run"
             )
 
 
@@ -607,9 +646,9 @@ def get_async(
     raise_exception : callable, optional
         Function that takes an exception and a traceback, and raises an error.
     callbacks : tuple or list of tuples, optional
-        Callbacks are passed in as tuples of length 8 (or length 5 for
-        legacy callbacks). Multiple sets of callbacks may be passed in as a
-        list of tuples. For more information, see the dask.diagnostics
+        Callbacks are passed in as tuples of length 9 (or length 8/5 for
+        backwards compatibility). Multiple sets of callbacks may be passed in
+        as a list of tuples. For more information, see the dask.diagnostics
         documentation.
     dumps: callable, optional
         Function to serialize task data and results to communicate between
@@ -664,10 +703,22 @@ def get_async(
             operation_start_cbs,
             partition_event_cbs,
             operation_end_cbs,
+            operation_error_cbs,
         ) = unpack_callbacks(callbacks)
         started_cbs = []
         operation_states = {}
         operation_meta_cache = {}
+        task_pack_exception = pack_exception
+        if operation_error_cbs:
+
+            def task_pack_exception(exc, dumps):
+                try:
+                    return pack_exception(exc, dumps)
+                except BaseException:
+                    # Ensure failures remain key-addressable when operation-error
+                    # hooks are active, even if pack_exception re-raises.
+                    return dumps((exc, exc.__traceback__))
+
         succeeded = False
         # if start_state_from_dask fails, we will have something
         # to pass to the final block.
@@ -747,7 +798,7 @@ def get_async(
                             dumps,
                             loads,
                             get_id,
-                            pack_exception,
+                            task_pack_exception,
                         )
                     )
 
@@ -765,6 +816,17 @@ def get_async(
                 for key, res_info, failed in queue_get(queue).result():
                     if failed:
                         exc, tb = loads(res_info)
+                        op_meta = get_operation_meta(key)
+                        if op_meta is not None:
+                            _operation_on_error(
+                                op_meta,
+                                key,
+                                exc,
+                                dsk,
+                                state,
+                                operation_states,
+                                operation_error_cbs,
+                            )
                         if rerun_exceptions_locally:
                             data = {
                                 dep: state["cache"][dep]

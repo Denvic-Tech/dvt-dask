@@ -1933,6 +1933,7 @@ class GroupBy:
         on_start=None,
         on_end=None,
         on_partition=None,
+        on_error=None,
         metadata=None,
         operation_id=None,
         **kwargs,
@@ -1972,6 +1973,7 @@ class GroupBy:
             on_start=on_start,
             on_end=on_end,
             on_partition=on_partition,
+            on_error=on_error,
             metadata=metadata,
             operation_id=operation_id,
         )

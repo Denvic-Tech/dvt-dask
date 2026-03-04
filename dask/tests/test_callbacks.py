@@ -115,17 +115,23 @@ def test_add_remove_mutates_not_replaces():
 def test_normalize_callback_legacy_tuple():
     cb = (None, None, None, None, None)
     normalized = normalize_callback(cb)
-    assert len(normalized) == 8
+    assert len(normalized) == 9
     assert normalized[:5] == cb
-    assert normalized[5:] == (None, None, None)
+    assert normalized[5:] == (None, None, None, None)
 
 
 def test_normalize_callback_extended_tuple():
     cb = (None, None, None, None, None, lambda *_: None, None, None)
     normalized = normalize_callback(cb)
+    assert normalized == cb + (None,)
+
+
+def test_normalize_callback_extended_tuple_with_operation_error():
+    cb = (None, None, None, None, None, lambda *_: None, None, None, lambda *_: None)
+    normalized = normalize_callback(cb)
     assert normalized == cb
 
 
 def test_normalize_callback_reject_invalid_tuple_length():
-    with pytest.raises(ValueError, match="length 5 or 8"):
+    with pytest.raises(ValueError, match="length 5, 8, or 9"):
         normalize_callback((None, None, None))
