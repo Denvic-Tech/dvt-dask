@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import threading
+
 import pytest
 
 from dask.dataframe.dask_expr import concat, from_pandas, merge
@@ -63,6 +65,29 @@ def test_build_operation_callbacks_spec():
             on_error=_noop,
             metadata={"exc": "bad"},
         )
+
+    runtime_metadata_spec = build_operation_callbacks_spec(
+        ddf_meta=meta,
+        operation_type="merge",
+        on_partition=_noop,
+        metadata={"runtime_ctx": object()},
+        operation_id="merge_with_runtime_metadata",
+    )
+    assert runtime_metadata_spec is not None
+    assert runtime_metadata_spec.operation_id == "merge_with_runtime_metadata"
+
+    metadata_token_spec = build_operation_callbacks_spec(
+        ddf_meta=meta,
+        operation_type="merge",
+        on_partition=_noop,
+        metadata={"runtime_ctx": object()},
+        metadata_token="stable-metadata-token",
+        operation_token="token-with-metadata-token",
+    )
+    assert metadata_token_spec is not None
+    assert metadata_token_spec.operation_id.startswith("merge-")
+
+    assert metadata_token_spec.conflict_key() is metadata_token_spec.conflict_key()
 
 
 def test_collect_operation_callbacks_specs_and_conflicts():
@@ -403,6 +428,60 @@ def test_operation_callback_specs_survive_optimization_and_skip_fusion():
 
     optimized = ddf.expr.optimize(fuse=True)
     assert all("Fused" not in type(node).__name__ for node in optimized.walk())
+
+
+def test_public_callbacks_copy_partition_mode():
+    pdf = pd.DataFrame({"a": [1, 2, 3, 4]})
+
+    base_without_copy = from_pandas(pdf, npartitions=2)
+    mutated_without_copy = base_without_copy.filter_rows(
+        base_without_copy["a"] > 0,
+        on_partition=lambda df_partition, *_args, **_kwargs: df_partition.__setitem__(
+            "__callback_mutation__", 1
+        ),
+        operation_id="copy_none",
+        copy_partition_mode="none",
+    )
+    result_without_copy = mutated_without_copy.compute(scheduler="threads")
+    assert "__callback_mutation__" in result_without_copy.columns
+
+    base_with_copy = from_pandas(pdf, npartitions=2)
+    protected_with_copy = base_with_copy.filter_rows(
+        base_with_copy["a"] > 0,
+        on_partition=lambda df_partition, *_args, **_kwargs: df_partition.__setitem__(
+            "__callback_mutation__", 1
+        ),
+        operation_id="copy_deep",
+        copy_partition_mode="deep",
+    )
+    result_with_copy = protected_with_copy.compute(scheduler="threads")
+    assert "__callback_mutation__" not in result_with_copy.columns
+
+
+def test_public_callbacks_threaded_partition_dispatch():
+    pdf = pd.DataFrame({"a": list(range(20))})
+    base = from_pandas(pdf, npartitions=5)
+    callback_thread_ids = set()
+    callback_lock = threading.Lock()
+    scheduler_thread_id = threading.get_ident()
+
+    def on_partition(_df_partition, _operation_id, **_kwargs):
+        with callback_lock:
+            callback_thread_ids.add(threading.get_ident())
+
+    ddf = base.filter_rows(
+        base["a"] >= 0,
+        on_partition=on_partition,
+        operation_id="threaded_dispatch",
+        partition_dispatch_mode="threaded",
+        partition_dispatch_workers=2,
+        partition_dispatch_queue_size=8,
+    )
+
+    result = ddf.compute(scheduler="threads")
+    assert len(result) == len(pdf)
+    assert callback_thread_ids
+    assert all(thread_id != scheduler_thread_id for thread_id in callback_thread_ids)
 
 
 def test_public_callbacks_disallow_distributed_scheduler():

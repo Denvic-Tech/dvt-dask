@@ -317,7 +317,13 @@ def _apply_public_operation_callbacks(
     on_partition=None,
     on_error=None,
     metadata: dict[str, Any] | None = None,
+    metadata_token: Any | None = None,
     operation_id: Any | None = None,
+    copy_meta_mode: str = "deep",
+    copy_partition_mode: str = "deep",
+    partition_dispatch_mode: str = "sync",
+    partition_dispatch_workers: int = 1,
+    partition_dispatch_queue_size: int = 256,
 ):
     spec = build_operation_callbacks_spec(
         ddf_meta=result._meta,
@@ -327,8 +333,14 @@ def _apply_public_operation_callbacks(
         on_partition=on_partition,
         on_error=on_error,
         metadata=metadata,
+        metadata_token=metadata_token,
         operation_id=operation_id,
         operation_token=result.expr._name,
+        copy_meta_mode=copy_meta_mode,
+        copy_partition_mode=copy_partition_mode,
+        partition_dispatch_mode=partition_dispatch_mode,
+        partition_dispatch_workers=partition_dispatch_workers,
+        partition_dispatch_queue_size=partition_dispatch_queue_size,
     )
     if spec is None:
         return result
@@ -546,8 +558,14 @@ Expr={expr}"""
         on_partition=None,
         on_error=None,
         metadata: dict[str, Any] | None = None,
+        metadata_token: Any | None = None,
         operation_id: Any | None = None,
         operation_type: str | None = None,
+        copy_meta_mode: str = "deep",
+        copy_partition_mode: str = "deep",
+        partition_dispatch_mode: str = "sync",
+        partition_dispatch_workers: int = 1,
+        partition_dispatch_queue_size: int = 256,
     ):
         operation_type = operation_type or _infer_callback_operation_type(self)
         return _apply_public_operation_callbacks(
@@ -558,7 +576,13 @@ Expr={expr}"""
             on_partition=on_partition,
             on_error=on_error,
             metadata=metadata,
+            metadata_token=metadata_token,
             operation_id=operation_id,
+            copy_meta_mode=copy_meta_mode,
+            copy_partition_mode=copy_partition_mode,
+            partition_dispatch_mode=partition_dispatch_mode,
+            partition_dispatch_workers=partition_dispatch_workers,
+            partition_dispatch_queue_size=partition_dispatch_queue_size,
         )
 
     def analyze(self, filename: str | None = None, format: str | None = None) -> None:
@@ -2971,7 +2995,13 @@ class DataFrame(FrameBase):
         on_partition=None,
         on_error=None,
         metadata=None,
+        metadata_token=None,
         operation_id=None,
+        copy_meta_mode: str = "deep",
+        copy_partition_mode: str = "deep",
+        partition_dispatch_mode: str = "sync",
+        partition_dispatch_workers: int = 1,
+        partition_dispatch_queue_size: int = 256,
     ):
         """Merge the DataFrame with another DataFrame
 
@@ -3084,7 +3114,13 @@ class DataFrame(FrameBase):
             on_partition=on_partition,
             on_error=on_error,
             metadata=metadata,
+            metadata_token=metadata_token,
             operation_id=operation_id,
+            copy_meta_mode=copy_meta_mode,
+            copy_partition_mode=copy_partition_mode,
+            partition_dispatch_mode=partition_dispatch_mode,
+            partition_dispatch_workers=partition_dispatch_workers,
+            partition_dispatch_queue_size=partition_dispatch_queue_size,
         )
 
     def filter_rows(
@@ -3096,7 +3132,13 @@ class DataFrame(FrameBase):
         on_partition=None,
         on_error=None,
         metadata=None,
+        metadata_token=None,
         operation_id=None,
+        copy_meta_mode: str = "deep",
+        copy_partition_mode: str = "deep",
+        partition_dispatch_mode: str = "sync",
+        partition_dispatch_workers: int = 1,
+        partition_dispatch_queue_size: int = 256,
     ):
         result = self[predicate]
         return _apply_public_operation_callbacks(
@@ -3107,7 +3149,13 @@ class DataFrame(FrameBase):
             on_partition=on_partition,
             on_error=on_error,
             metadata=metadata,
+            metadata_token=metadata_token,
             operation_id=operation_id,
+            copy_meta_mode=copy_meta_mode,
+            copy_partition_mode=copy_partition_mode,
+            partition_dispatch_mode=partition_dispatch_mode,
+            partition_dispatch_workers=partition_dispatch_workers,
+            partition_dispatch_queue_size=partition_dispatch_queue_size,
         )
 
     @derived_from(pd.DataFrame)
@@ -5707,7 +5755,13 @@ def merge(
     on_partition=None,
     on_error=None,
     metadata=None,
+    metadata_token=None,
     operation_id=None,
+    copy_meta_mode: str = "deep",
+    copy_partition_mode: str = "deep",
+    partition_dispatch_mode: str = "sync",
+    partition_dispatch_workers: int = 1,
+    partition_dispatch_queue_size: int = 256,
 ):
     for o in [on, left_on, right_on]:
         if isinstance(o, FrameBase):
@@ -5788,7 +5842,13 @@ def merge(
         on_partition=on_partition,
         on_error=on_error,
         metadata=metadata,
+        metadata_token=metadata_token,
         operation_id=operation_id,
+        copy_meta_mode=copy_meta_mode,
+        copy_partition_mode=copy_partition_mode,
+        partition_dispatch_mode=partition_dispatch_mode,
+        partition_dispatch_workers=partition_dispatch_workers,
+        partition_dispatch_queue_size=partition_dispatch_queue_size,
     )
     if left._meta.index.name != right._meta.index.name:
         return result.rename_axis(index=result._meta.index.name)
