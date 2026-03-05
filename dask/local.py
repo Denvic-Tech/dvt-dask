@@ -479,8 +479,7 @@ def _operation_on_posttask(
     state: dict,
     operation_states: dict,
     partition_event_cbs: Sequence[Callable],
-    operation_end_cbs: Sequence[Callable],
-) -> None:
+) -> bool:
     if not isinstance(op_meta, OperationMeta):
         raise RuntimeError(
             f"Invalid operation metadata type for {key!r}: {type(op_meta).__name__}"
@@ -512,11 +511,30 @@ def _operation_on_posttask(
             f"Operation {op_meta.operation_id!r} has negative remaining task count"
         )
 
-    if op_state["remaining"] == 0:
-        op_state["finished"] = True
-        op_state["end_count"] += 1
-        for cb in operation_end_cbs:
-            cb(op_meta, dsk, state)
+    return op_state["remaining"] == 0
+
+
+def _operation_on_end(
+    op_meta: OperationMeta,
+    key: Key,
+    dsk: Mapping[Key, object],
+    state: dict,
+    operation_states: dict,
+    operation_end_cbs: Sequence[Callable],
+) -> None:
+    op_state = _get_or_create_operation_state(operation_states, op_meta, key)
+    if op_state["finished"]:
+        raise RuntimeError(
+            f"Operation {op_meta.operation_id!r} received duplicate end signal (key={key!r})"
+        )
+    if op_state["remaining"] != 0:
+        raise RuntimeError(
+            f"Operation {op_meta.operation_id!r} end signaled with remaining={op_state['remaining']}"
+        )
+    op_state["finished"] = True
+    op_state["end_count"] += 1
+    for cb in operation_end_cbs:
+        cb(op_meta, dsk, state)
 
 
 def _operation_on_error(
@@ -840,18 +858,27 @@ def get_async(
                     state["cache"][key] = res
                     finish_task(dsk, key, state, results, keyorder.get)
                     op_meta = get_operation_meta(key)
+                    operation_finished = False
                     if op_meta is not None:
-                        _operation_on_posttask(
+                        operation_finished = _operation_on_posttask(
                             op_meta,
                             key,
                             dsk,
                             state,
                             operation_states,
                             partition_event_cbs,
-                            operation_end_cbs,
                         )
                     for f in posttask_cbs:
                         f(key, res, dsk, state, worker_id)
+                    if operation_finished and op_meta is not None:
+                        _operation_on_end(
+                            op_meta,
+                            key,
+                            dsk,
+                            state,
+                            operation_states,
+                            operation_end_cbs,
+                        )
 
             _validate_operation_states(operation_states)
             succeeded = True

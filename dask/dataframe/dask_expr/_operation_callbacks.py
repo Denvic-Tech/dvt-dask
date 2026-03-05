@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from queue import Queue
-from threading import Lock, Thread
+from threading import Condition, Lock, Thread
 from typing import Any
 
 from dask._task_spec import OperationMeta
@@ -98,6 +98,8 @@ class _PartitionCallbackDispatcher:
         self._workers: list[Thread] = []
         self._error_lock = Lock()
         self._error: BaseException | None = None
+        self._operation_pending: dict[Any, int] = {}
+        self._operation_pending_condition = Condition(Lock())
         self._closed = False
         for index in range(max_workers):
             worker = Thread(
@@ -123,24 +125,52 @@ class _PartitionCallbackDispatcher:
             return
         raise RuntimeError("Asynchronous partition callback failed") from exc
 
+    def _increment_operation_pending(self, operation_id: Any) -> None:
+        with self._operation_pending_condition:
+            current = self._operation_pending.get(operation_id, 0)
+            self._operation_pending[operation_id] = current + 1
+
+    def _decrement_operation_pending(self, operation_id: Any) -> None:
+        with self._operation_pending_condition:
+            remaining = self._operation_pending.get(operation_id, 0) - 1
+            if remaining <= 0:
+                self._operation_pending.pop(operation_id, None)
+            else:
+                self._operation_pending[operation_id] = remaining
+            self._operation_pending_condition.notify_all()
+
     def _worker_loop(self) -> None:
         while True:
             item = self._queue.get()
+            operation_id = None
             try:
                 if item is self._STOP:
                     return
+                spec, result, op_meta = item
+                operation_id = op_meta.operation_id
                 if self._get_error() is not None:
                     continue
-                spec, result, op_meta = item
                 self._invoke_callback(spec, result, op_meta)
             except BaseException as exc:  # noqa: BLE001
                 self._set_error(exc)
             finally:
+                if operation_id is not None:
+                    self._decrement_operation_pending(operation_id)
                 self._queue.task_done()
 
     def submit(self, spec: OperationCallbacksSpec, result: Any, op_meta: OperationMeta) -> None:
         self._raise_if_failed()
+        self._increment_operation_pending(op_meta.operation_id)
         self._queue.put((spec, result, op_meta))
+        self._raise_if_failed()
+
+    def wait_operation(self, operation_id: Any) -> None:
+        while True:
+            self._raise_if_failed()
+            with self._operation_pending_condition:
+                if self._operation_pending.get(operation_id, 0) == 0:
+                    break
+                self._operation_pending_condition.wait(timeout=0.05)
         self._raise_if_failed()
 
     def close(self, *, raise_on_error: bool) -> None:
@@ -443,6 +473,10 @@ class PublicOperationCallbacks(Callback):
         spec = self._spec_for_operation_id(op_meta.operation_id)
         if spec.on_end is None:
             return
+        if spec.partition_dispatch_mode == "threaded":
+            dispatcher = self._threaded_dispatcher
+            if dispatcher is not None:
+                dispatcher.wait_operation(spec.operation_id)
         spec.on_end(
             _copy_value(spec.ddf_meta, spec.copy_meta_mode),
             spec.operation_id,
