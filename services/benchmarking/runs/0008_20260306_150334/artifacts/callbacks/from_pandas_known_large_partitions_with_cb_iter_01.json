@@ -1,0 +1,95 @@
+{
+  "profile": "from_pandas_known_large_partitions_with_cb",
+  "iteration": 1,
+  "operation_id": "from_pandas_known_large_partitions_with_cb_iter_01",
+  "start_calls": 1,
+  "end_calls": 1,
+  "error_calls": 0,
+  "partition_calls": 1,
+  "partition_finish_calls": 1,
+  "partition_count_values": [
+    1
+  ],
+  "partition_numbers_seen": [
+    0
+  ],
+  "stages_seen": [
+    "finish"
+  ],
+  "errors": [],
+  "columns_at_start": [
+    "lookup_key",
+    "event_day",
+    "bucket",
+    "weighted_sum",
+    "weighted_sq_sum",
+    "row_count",
+    "mean_text_len",
+    "score_mean",
+    "qty_log_mean",
+    "high_amount_count",
+    "bucket_even_count",
+    "weighted_density",
+    "high_amount_ratio",
+    "bucket_even_ratio",
+    "score_pressure",
+    "tier",
+    "priority",
+    "tier_weight",
+    "priority_scaled",
+    "weighted_tier_value",
+    "rolling_weighted_5",
+    "rolling_rows_5",
+    "rolling_score_3",
+    "rolling_density_4",
+    "bucket_rolling_weighted_3",
+    "bucket_rolling_rows_3",
+    "blended_score",
+    "composite_pressure"
+  ],
+  "operation_id_seen": "from_pandas_known_large_partitions_with_cb_iter_01",
+  "profile_from_metadata": "from_pandas_known_large_partitions_with_cb",
+  "iteration_from_metadata": 1,
+  "columns_at_end": [
+    "lookup_key",
+    "event_day",
+    "bucket",
+    "weighted_sum",
+    "weighted_sq_sum",
+    "row_count",
+    "mean_text_len",
+    "score_mean",
+    "qty_log_mean",
+    "high_amount_count",
+    "bucket_even_count",
+    "weighted_density",
+    "high_amount_ratio",
+    "bucket_even_ratio",
+    "score_pressure",
+    "tier",
+    "priority",
+    "tier_weight",
+    "priority_scaled",
+    "weighted_tier_value",
+    "rolling_weighted_5",
+    "rolling_rows_5",
+    "rolling_score_3",
+    "rolling_density_4",
+    "bucket_rolling_weighted_3",
+    "bucket_rolling_rows_3",
+    "blended_score",
+    "composite_pressure"
+  ],
+  "success": true,
+  "error": "",
+  "created_at_utc": "2026-03-06T10:03:39.600026+00:00",
+  "unique_partitions_seen": [
+    0
+  ],
+  "unique_partition_count_values": [
+    1
+  ],
+  "unique_stages": [
+    "finish"
+  ]
+}

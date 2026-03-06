@@ -1,0 +1,85 @@
+2026-03-06 14:42:19,452 | INFO | Benchmark run directory created: services\benchmarking\runs\0001_20260306_144219
+2026-03-06 14:42:19,503 | INFO | Running profile: from_pandas_known_normal
+2026-03-06 14:42:19,504 | INFO | profile=from_pandas_known_normal iteration=1 seed=42
+2026-03-06 14:42:19,784 | INFO | Running profile: delayed_known_normal
+2026-03-06 14:42:19,784 | INFO | profile=delayed_known_normal iteration=1 seed=42
+2026-03-06 14:42:19,925 | INFO | Running profile: delayed_unknown_normal
+2026-03-06 14:42:19,925 | INFO | profile=delayed_unknown_normal iteration=1 seed=42
+2026-03-06 14:42:20,088 | INFO | Running profile: from_pandas_known_large_partitions
+2026-03-06 14:42:20,088 | INFO | profile=from_pandas_known_large_partitions iteration=1 seed=42
+2026-03-06 14:42:20,227 | INFO | Running profile: from_pandas_known_small_partitions
+2026-03-06 14:42:20,227 | INFO | profile=from_pandas_known_small_partitions iteration=1 seed=42
+2026-03-06 14:42:20,259 | ERROR | profile=from_pandas_known_small_partitions iteration=1 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  [Previous line repeated 1 more time]
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 209, in _lower
+    if npartitions_out < frame.npartitions and method != "p2p":
+                         ^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:42:20,265 | INFO | Benchmark completed. Results: services\benchmarking\runs\0001_20260306_144219\results.csv

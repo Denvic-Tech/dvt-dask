@@ -1,0 +1,24 @@
+{
+  "repeats": 1,
+  "seed": 42,
+  "scheduler": "threads",
+  "rows_normal": 6000,
+  "rows_large_partition": 12000,
+  "rows_small_partition": 4000,
+  "normal_partition_size": 200,
+  "large_partition_size": 3000,
+  "small_partition_size": 20,
+  "null_fraction": 0.05,
+  "skew_factor": 1.4,
+  "memory_sample_interval_ms": 50,
+  "graph_artifacts": false,
+  "execution_mode": "host",
+  "runs_root": "services\\benchmarking\\runs",
+  "required_source_profiles": [
+    "from_pandas_known_normal",
+    "delayed_known_normal",
+    "delayed_unknown_normal",
+    "from_pandas_known_large_partitions",
+    "from_pandas_known_small_partitions"
+  ]
+}

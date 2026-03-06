@@ -1,0 +1,4 @@
+interface:
+  display_name: "Experiment Mapping Lab"
+  short_description: "Iterative event-matching experiment runner"
+  default_prompt: "Use $experiment-mapping-lab to run the next event-mapping experiment and document results in tmp/experiments."

@@ -1,0 +1,26 @@
+тип источника,итерация,время_сек,память_min_mib,память_max_mib,память_avg_mib,успех,ошибка
+from_pandas_known_normal,1,0.0,141.21484375,144.76171875,142.98828125,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""
+from_pandas_known_normal,2,0.0,145.81640625,147.27734375,146.546875,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""
+from_pandas_known_normal,3,0.0,144.78515625,147.1953125,145.990234375,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""
+from_pandas_known_normal,4,0.0,144.8671875,147.44921875,146.158203125,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""
+from_pandas_known_normal,5,0.0,146.375,147.54296875,146.958984375,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""
+delayed_known_normal,1,0.0,148.19921875,148.2421875,148.220703125,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""
+delayed_known_normal,2,0.0,147.82421875,147.921875,147.873046875,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""
+delayed_known_normal,3,0.0,147.55078125,147.6328125,147.591796875,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""
+delayed_known_normal,4,0.0,147.625,147.70703125,147.666015625,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""
+delayed_known_normal,5,0.0,137.3828125,137.4296875,137.40625,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""
+delayed_unknown_normal,1,0.0,139.05078125,139.078125,139.064453125,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""
+delayed_unknown_normal,2,0.0,138.05078125,138.12109375,138.0859375,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""
+delayed_unknown_normal,3,0.0,138.08984375,138.15625,138.123046875,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""
+delayed_unknown_normal,4,0.0,137.95703125,137.9921875,137.974609375,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""
+delayed_unknown_normal,5,0.0,138.09765625,138.171875,138.134765625,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""
+from_pandas_known_large_partitions,1,0.17305720000877045,161.125,197.1015625,173.2314453125,True,
+from_pandas_known_large_partitions,2,0.12246730001061223,177.9375,182.25390625,179.73958333333334,True,
+from_pandas_known_large_partitions,3,0.1190214000234846,176.00390625,180.66015625,177.2626953125,True,
+from_pandas_known_large_partitions,4,0.12776079998002388,181.71875,195.50390625,187.912109375,True,
+from_pandas_known_large_partitions,5,0.11848790000658482,197.16015625,200.85546875,199.1484375,True,
+from_pandas_known_small_partitions,1,0.0,178.48828125,178.4921875,178.490234375,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""
+from_pandas_known_small_partitions,2,0.0,178.53125,178.5390625,178.53515625,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""
+from_pandas_known_small_partitions,3,0.0,178.54296875,178.54296875,178.54296875,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""
+from_pandas_known_small_partitions,4,0.0,178.54296875,178.54296875,178.54296875,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""
+from_pandas_known_small_partitions,5,0.0,178.54296875,178.54296875,178.54296875,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""

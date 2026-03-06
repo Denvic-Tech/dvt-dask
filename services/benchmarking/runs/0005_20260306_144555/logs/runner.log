@@ -1,0 +1,32 @@
+2026-03-06 14:45:55,497 | INFO | Benchmark run directory created: services\benchmarking\runs\0005_20260306_144555
+2026-03-06 14:45:55,741 | INFO | Running profile: from_pandas_known_normal
+2026-03-06 14:45:55,741 | INFO | profile=from_pandas_known_normal iteration=1 seed=42
+2026-03-06 14:45:56,291 | INFO | profile=from_pandas_known_normal iteration=2 seed=43
+2026-03-06 14:45:56,681 | INFO | profile=from_pandas_known_normal iteration=3 seed=44
+2026-03-06 14:45:57,066 | INFO | profile=from_pandas_known_normal iteration=4 seed=45
+2026-03-06 14:45:57,480 | INFO | profile=from_pandas_known_normal iteration=5 seed=46
+2026-03-06 14:45:57,865 | INFO | Running profile: delayed_known_normal
+2026-03-06 14:45:57,866 | INFO | profile=delayed_known_normal iteration=1 seed=42
+2026-03-06 14:45:58,376 | INFO | profile=delayed_known_normal iteration=2 seed=43
+2026-03-06 14:45:58,834 | INFO | profile=delayed_known_normal iteration=3 seed=44
+2026-03-06 14:45:59,316 | INFO | profile=delayed_known_normal iteration=4 seed=45
+2026-03-06 14:45:59,778 | INFO | profile=delayed_known_normal iteration=5 seed=46
+2026-03-06 14:46:00,237 | INFO | Running profile: delayed_unknown_normal
+2026-03-06 14:46:00,237 | INFO | profile=delayed_unknown_normal iteration=1 seed=42
+2026-03-06 14:46:00,696 | INFO | profile=delayed_unknown_normal iteration=2 seed=43
+2026-03-06 14:46:01,137 | INFO | profile=delayed_unknown_normal iteration=3 seed=44
+2026-03-06 14:46:01,603 | INFO | profile=delayed_unknown_normal iteration=4 seed=45
+2026-03-06 14:46:02,110 | INFO | profile=delayed_unknown_normal iteration=5 seed=46
+2026-03-06 14:46:02,564 | INFO | Running profile: from_pandas_known_large_partitions
+2026-03-06 14:46:02,565 | INFO | profile=from_pandas_known_large_partitions iteration=1 seed=42
+2026-03-06 14:46:03,049 | INFO | profile=from_pandas_known_large_partitions iteration=2 seed=43
+2026-03-06 14:46:03,550 | INFO | profile=from_pandas_known_large_partitions iteration=3 seed=44
+2026-03-06 14:46:04,030 | INFO | profile=from_pandas_known_large_partitions iteration=4 seed=45
+2026-03-06 14:46:04,500 | INFO | profile=from_pandas_known_large_partitions iteration=5 seed=46
+2026-03-06 14:46:05,000 | INFO | Running profile: from_pandas_known_small_partitions
+2026-03-06 14:46:05,000 | INFO | profile=from_pandas_known_small_partitions iteration=1 seed=42
+2026-03-06 14:46:05,367 | INFO | profile=from_pandas_known_small_partitions iteration=2 seed=43
+2026-03-06 14:46:05,736 | INFO | profile=from_pandas_known_small_partitions iteration=3 seed=44
+2026-03-06 14:46:06,100 | INFO | profile=from_pandas_known_small_partitions iteration=4 seed=45
+2026-03-06 14:46:06,466 | INFO | profile=from_pandas_known_small_partitions iteration=5 seed=46
+2026-03-06 14:46:06,836 | INFO | Benchmark completed. Results: services\benchmarking\runs\0005_20260306_144555\results.csv

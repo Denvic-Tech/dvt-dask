@@ -1,5 +1,8 @@
 # Repository Guidelines
 
+## DVT Dask
+This repository is a fork of the original Dask project for DVT and is used as part of `C:\work\projects\Visual_transformer`.
+
 ## Project Structure & Module Organization
 Core library code lives in `dask/` with major subpackages like `array/`, `dataframe/`, `bag/`, `bytes/`, `diagnostics/`, and `widgets/`.  
 Tests are colocated with modules under `dask/**/tests/` (for example, `dask/array/tests/test_*.py`) with additional integration-style coverage in `dask/tests/`.  
@@ -34,3 +37,11 @@ PRs should satisfy the repository template:
 ## Configuration Tips
 When adding config options, keep `dask/dask.yaml` and `dask/dask-schema.yaml` in sync.  
 Do not commit local environment artifacts (`.venv/`, machine-specific IDE files, generated caches).
+
+## MCP Tools Usage
+Use `filesystem`, `pycharm`, and `project_mcp` tools during development to speed up navigation, editing, execution, and verification tasks.  
+Prefer these tools over ad-hoc manual steps when they can solve the task directly and more reliably.
+
+## project_mcp Requirements
+Run tests through `project_mcp` (for example, `mcp__project_mcp__run_pytest`) whenever possible.  
+After each completed task, append a changelog record in Russian via `mcp__project_mcp__append_changelog_entry`.

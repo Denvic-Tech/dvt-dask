@@ -1,0 +1,2552 @@
+2026-03-06 14:38:10,100 | INFO | Benchmark run directory created: services\benchmarking\runs\0000_20260306_143810
+2026-03-06 14:38:10,340 | INFO | Running profile: from_pandas_known_normal
+2026-03-06 14:38:10,340 | INFO | profile=from_pandas_known_normal iteration=1 seed=42
+2026-03-06 14:38:10,589 | ERROR | profile=from_pandas_known_normal iteration=1 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_repartition.py", line 89, in _lower
+    if self.new_partitions < self.frame.npartitions:
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_reductions.py", line 471, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2421, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3551, in _divisions
+    if {df.npartitions for df in self.args} == {1}:
+                                 ^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3569, in args
+    return [op for op in dfs if not is_broadcastable(dfs, op)]
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3226, in is_broadcastable
+    and s.npartitions == 1
+        ^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_rolling.py", line 66, in npartitions
+    return self.frame.npartitions
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2231, in _divisions
+    return super()._divisions()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 803, in npartitions
+    return self.operand("npartitions") or len(self._divisions()) - 1
+                                              ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 776, in _divisions
+    if self._npartitions_input == 1:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 799, in _npartitions_input
+    return self.operand("npartitions") or self.frame.npartitions
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:38:10,615 | INFO | profile=from_pandas_known_normal iteration=2 seed=43
+2026-03-06 14:38:10,680 | ERROR | profile=from_pandas_known_normal iteration=2 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_repartition.py", line 89, in _lower
+    if self.new_partitions < self.frame.npartitions:
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_reductions.py", line 471, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2421, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3551, in _divisions
+    if {df.npartitions for df in self.args} == {1}:
+                                 ^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3569, in args
+    return [op for op in dfs if not is_broadcastable(dfs, op)]
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3226, in is_broadcastable
+    and s.npartitions == 1
+        ^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_rolling.py", line 66, in npartitions
+    return self.frame.npartitions
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2231, in _divisions
+    return super()._divisions()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 803, in npartitions
+    return self.operand("npartitions") or len(self._divisions()) - 1
+                                              ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 776, in _divisions
+    if self._npartitions_input == 1:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 799, in _npartitions_input
+    return self.operand("npartitions") or self.frame.npartitions
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:38:10,682 | INFO | profile=from_pandas_known_normal iteration=3 seed=44
+2026-03-06 14:38:10,746 | ERROR | profile=from_pandas_known_normal iteration=3 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_repartition.py", line 89, in _lower
+    if self.new_partitions < self.frame.npartitions:
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_reductions.py", line 471, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2421, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3551, in _divisions
+    if {df.npartitions for df in self.args} == {1}:
+                                 ^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3569, in args
+    return [op for op in dfs if not is_broadcastable(dfs, op)]
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3226, in is_broadcastable
+    and s.npartitions == 1
+        ^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_rolling.py", line 66, in npartitions
+    return self.frame.npartitions
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2231, in _divisions
+    return super()._divisions()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 803, in npartitions
+    return self.operand("npartitions") or len(self._divisions()) - 1
+                                              ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 776, in _divisions
+    if self._npartitions_input == 1:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 799, in _npartitions_input
+    return self.operand("npartitions") or self.frame.npartitions
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:38:10,748 | INFO | profile=from_pandas_known_normal iteration=4 seed=45
+2026-03-06 14:38:10,813 | ERROR | profile=from_pandas_known_normal iteration=4 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_repartition.py", line 89, in _lower
+    if self.new_partitions < self.frame.npartitions:
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_reductions.py", line 471, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2421, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3551, in _divisions
+    if {df.npartitions for df in self.args} == {1}:
+                                 ^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3569, in args
+    return [op for op in dfs if not is_broadcastable(dfs, op)]
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3226, in is_broadcastable
+    and s.npartitions == 1
+        ^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_rolling.py", line 66, in npartitions
+    return self.frame.npartitions
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2231, in _divisions
+    return super()._divisions()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 803, in npartitions
+    return self.operand("npartitions") or len(self._divisions()) - 1
+                                              ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 776, in _divisions
+    if self._npartitions_input == 1:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 799, in _npartitions_input
+    return self.operand("npartitions") or self.frame.npartitions
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:38:10,816 | INFO | profile=from_pandas_known_normal iteration=5 seed=46
+2026-03-06 14:38:10,879 | ERROR | profile=from_pandas_known_normal iteration=5 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_repartition.py", line 89, in _lower
+    if self.new_partitions < self.frame.npartitions:
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_reductions.py", line 471, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2421, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3551, in _divisions
+    if {df.npartitions for df in self.args} == {1}:
+                                 ^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3569, in args
+    return [op for op in dfs if not is_broadcastable(dfs, op)]
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3226, in is_broadcastable
+    and s.npartitions == 1
+        ^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_rolling.py", line 66, in npartitions
+    return self.frame.npartitions
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2231, in _divisions
+    return super()._divisions()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 803, in npartitions
+    return self.operand("npartitions") or len(self._divisions()) - 1
+                                              ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 776, in _divisions
+    if self._npartitions_input == 1:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 799, in _npartitions_input
+    return self.operand("npartitions") or self.frame.npartitions
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:38:10,882 | INFO | Running profile: delayed_known_normal
+2026-03-06 14:38:10,882 | INFO | profile=delayed_known_normal iteration=1 seed=42
+2026-03-06 14:38:10,944 | ERROR | profile=delayed_known_normal iteration=1 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_repartition.py", line 89, in _lower
+    if self.new_partitions < self.frame.npartitions:
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_reductions.py", line 471, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2421, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3551, in _divisions
+    if {df.npartitions for df in self.args} == {1}:
+                                 ^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3569, in args
+    return [op for op in dfs if not is_broadcastable(dfs, op)]
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3226, in is_broadcastable
+    and s.npartitions == 1
+        ^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_rolling.py", line 66, in npartitions
+    return self.frame.npartitions
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2231, in _divisions
+    return super()._divisions()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 803, in npartitions
+    return self.operand("npartitions") or len(self._divisions()) - 1
+                                              ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 776, in _divisions
+    if self._npartitions_input == 1:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 799, in _npartitions_input
+    return self.operand("npartitions") or self.frame.npartitions
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:38:10,946 | INFO | profile=delayed_known_normal iteration=2 seed=43
+2026-03-06 14:38:11,009 | ERROR | profile=delayed_known_normal iteration=2 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_repartition.py", line 89, in _lower
+    if self.new_partitions < self.frame.npartitions:
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_reductions.py", line 471, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2421, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3551, in _divisions
+    if {df.npartitions for df in self.args} == {1}:
+                                 ^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3569, in args
+    return [op for op in dfs if not is_broadcastable(dfs, op)]
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3226, in is_broadcastable
+    and s.npartitions == 1
+        ^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_rolling.py", line 66, in npartitions
+    return self.frame.npartitions
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2231, in _divisions
+    return super()._divisions()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 803, in npartitions
+    return self.operand("npartitions") or len(self._divisions()) - 1
+                                              ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 776, in _divisions
+    if self._npartitions_input == 1:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 799, in _npartitions_input
+    return self.operand("npartitions") or self.frame.npartitions
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:38:11,011 | INFO | profile=delayed_known_normal iteration=3 seed=44
+2026-03-06 14:38:11,075 | ERROR | profile=delayed_known_normal iteration=3 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_repartition.py", line 89, in _lower
+    if self.new_partitions < self.frame.npartitions:
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_reductions.py", line 471, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2421, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3551, in _divisions
+    if {df.npartitions for df in self.args} == {1}:
+                                 ^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3569, in args
+    return [op for op in dfs if not is_broadcastable(dfs, op)]
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3226, in is_broadcastable
+    and s.npartitions == 1
+        ^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_rolling.py", line 66, in npartitions
+    return self.frame.npartitions
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2231, in _divisions
+    return super()._divisions()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 803, in npartitions
+    return self.operand("npartitions") or len(self._divisions()) - 1
+                                              ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 776, in _divisions
+    if self._npartitions_input == 1:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 799, in _npartitions_input
+    return self.operand("npartitions") or self.frame.npartitions
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:38:11,077 | INFO | profile=delayed_known_normal iteration=4 seed=45
+2026-03-06 14:38:11,139 | ERROR | profile=delayed_known_normal iteration=4 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_repartition.py", line 89, in _lower
+    if self.new_partitions < self.frame.npartitions:
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_reductions.py", line 471, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2421, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3551, in _divisions
+    if {df.npartitions for df in self.args} == {1}:
+                                 ^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3569, in args
+    return [op for op in dfs if not is_broadcastable(dfs, op)]
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3226, in is_broadcastable
+    and s.npartitions == 1
+        ^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_rolling.py", line 66, in npartitions
+    return self.frame.npartitions
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2231, in _divisions
+    return super()._divisions()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 803, in npartitions
+    return self.operand("npartitions") or len(self._divisions()) - 1
+                                              ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 776, in _divisions
+    if self._npartitions_input == 1:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 799, in _npartitions_input
+    return self.operand("npartitions") or self.frame.npartitions
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:38:11,142 | INFO | profile=delayed_known_normal iteration=5 seed=46
+2026-03-06 14:38:11,205 | ERROR | profile=delayed_known_normal iteration=5 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_repartition.py", line 89, in _lower
+    if self.new_partitions < self.frame.npartitions:
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_reductions.py", line 471, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2421, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3551, in _divisions
+    if {df.npartitions for df in self.args} == {1}:
+                                 ^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3569, in args
+    return [op for op in dfs if not is_broadcastable(dfs, op)]
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3226, in is_broadcastable
+    and s.npartitions == 1
+        ^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_rolling.py", line 66, in npartitions
+    return self.frame.npartitions
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2231, in _divisions
+    return super()._divisions()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 803, in npartitions
+    return self.operand("npartitions") or len(self._divisions()) - 1
+                                              ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 776, in _divisions
+    if self._npartitions_input == 1:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 799, in _npartitions_input
+    return self.operand("npartitions") or self.frame.npartitions
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:38:11,207 | INFO | Running profile: delayed_unknown_normal
+2026-03-06 14:38:11,207 | INFO | profile=delayed_unknown_normal iteration=1 seed=42
+2026-03-06 14:38:11,269 | ERROR | profile=delayed_unknown_normal iteration=1 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_repartition.py", line 89, in _lower
+    if self.new_partitions < self.frame.npartitions:
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_reductions.py", line 471, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2421, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3551, in _divisions
+    if {df.npartitions for df in self.args} == {1}:
+                                 ^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3569, in args
+    return [op for op in dfs if not is_broadcastable(dfs, op)]
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3226, in is_broadcastable
+    and s.npartitions == 1
+        ^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_rolling.py", line 66, in npartitions
+    return self.frame.npartitions
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2231, in _divisions
+    return super()._divisions()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 803, in npartitions
+    return self.operand("npartitions") or len(self._divisions()) - 1
+                                              ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 776, in _divisions
+    if self._npartitions_input == 1:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 799, in _npartitions_input
+    return self.operand("npartitions") or self.frame.npartitions
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:38:11,272 | INFO | profile=delayed_unknown_normal iteration=2 seed=43
+2026-03-06 14:38:11,333 | ERROR | profile=delayed_unknown_normal iteration=2 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_repartition.py", line 89, in _lower
+    if self.new_partitions < self.frame.npartitions:
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_reductions.py", line 471, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2421, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3551, in _divisions
+    if {df.npartitions for df in self.args} == {1}:
+                                 ^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3569, in args
+    return [op for op in dfs if not is_broadcastable(dfs, op)]
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3226, in is_broadcastable
+    and s.npartitions == 1
+        ^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_rolling.py", line 66, in npartitions
+    return self.frame.npartitions
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2231, in _divisions
+    return super()._divisions()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 803, in npartitions
+    return self.operand("npartitions") or len(self._divisions()) - 1
+                                              ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 776, in _divisions
+    if self._npartitions_input == 1:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 799, in _npartitions_input
+    return self.operand("npartitions") or self.frame.npartitions
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:38:11,336 | INFO | profile=delayed_unknown_normal iteration=3 seed=44
+2026-03-06 14:38:11,398 | ERROR | profile=delayed_unknown_normal iteration=3 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_repartition.py", line 89, in _lower
+    if self.new_partitions < self.frame.npartitions:
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_reductions.py", line 471, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2421, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3551, in _divisions
+    if {df.npartitions for df in self.args} == {1}:
+                                 ^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3569, in args
+    return [op for op in dfs if not is_broadcastable(dfs, op)]
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3226, in is_broadcastable
+    and s.npartitions == 1
+        ^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_rolling.py", line 66, in npartitions
+    return self.frame.npartitions
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2231, in _divisions
+    return super()._divisions()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 803, in npartitions
+    return self.operand("npartitions") or len(self._divisions()) - 1
+                                              ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 776, in _divisions
+    if self._npartitions_input == 1:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 799, in _npartitions_input
+    return self.operand("npartitions") or self.frame.npartitions
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:38:11,400 | INFO | profile=delayed_unknown_normal iteration=4 seed=45
+2026-03-06 14:38:11,463 | ERROR | profile=delayed_unknown_normal iteration=4 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_repartition.py", line 89, in _lower
+    if self.new_partitions < self.frame.npartitions:
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_reductions.py", line 471, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2421, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3551, in _divisions
+    if {df.npartitions for df in self.args} == {1}:
+                                 ^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3569, in args
+    return [op for op in dfs if not is_broadcastable(dfs, op)]
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3226, in is_broadcastable
+    and s.npartitions == 1
+        ^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_rolling.py", line 66, in npartitions
+    return self.frame.npartitions
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2231, in _divisions
+    return super()._divisions()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 803, in npartitions
+    return self.operand("npartitions") or len(self._divisions()) - 1
+                                              ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 776, in _divisions
+    if self._npartitions_input == 1:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 799, in _npartitions_input
+    return self.operand("npartitions") or self.frame.npartitions
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:38:11,465 | INFO | profile=delayed_unknown_normal iteration=5 seed=46
+2026-03-06 14:38:11,528 | ERROR | profile=delayed_unknown_normal iteration=5 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_repartition.py", line 89, in _lower
+    if self.new_partitions < self.frame.npartitions:
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_reductions.py", line 471, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2421, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3551, in _divisions
+    if {df.npartitions for df in self.args} == {1}:
+                                 ^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3569, in args
+    return [op for op in dfs if not is_broadcastable(dfs, op)]
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3226, in is_broadcastable
+    and s.npartitions == 1
+        ^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_rolling.py", line 66, in npartitions
+    return self.frame.npartitions
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2231, in _divisions
+    return super()._divisions()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 803, in npartitions
+    return self.operand("npartitions") or len(self._divisions()) - 1
+                                              ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 776, in _divisions
+    if self._npartitions_input == 1:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 799, in _npartitions_input
+    return self.operand("npartitions") or self.frame.npartitions
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:38:11,530 | INFO | Running profile: from_pandas_known_large_partitions
+2026-03-06 14:38:11,530 | INFO | profile=from_pandas_known_large_partitions iteration=1 seed=42
+2026-03-06 14:38:11,854 | INFO | profile=from_pandas_known_large_partitions iteration=2 seed=43
+2026-03-06 14:38:12,126 | INFO | profile=from_pandas_known_large_partitions iteration=3 seed=44
+2026-03-06 14:38:12,396 | INFO | profile=from_pandas_known_large_partitions iteration=4 seed=45
+2026-03-06 14:38:12,673 | INFO | profile=from_pandas_known_large_partitions iteration=5 seed=46
+2026-03-06 14:38:12,941 | INFO | Running profile: from_pandas_known_small_partitions
+2026-03-06 14:38:12,941 | INFO | profile=from_pandas_known_small_partitions iteration=1 seed=42
+2026-03-06 14:38:12,984 | ERROR | profile=from_pandas_known_small_partitions iteration=1 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_repartition.py", line 89, in _lower
+    if self.new_partitions < self.frame.npartitions:
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_reductions.py", line 471, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2421, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3551, in _divisions
+    if {df.npartitions for df in self.args} == {1}:
+                                 ^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3569, in args
+    return [op for op in dfs if not is_broadcastable(dfs, op)]
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3226, in is_broadcastable
+    and s.npartitions == 1
+        ^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_rolling.py", line 66, in npartitions
+    return self.frame.npartitions
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2231, in _divisions
+    return super()._divisions()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 803, in npartitions
+    return self.operand("npartitions") or len(self._divisions()) - 1
+                                              ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 776, in _divisions
+    if self._npartitions_input == 1:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 799, in _npartitions_input
+    return self.operand("npartitions") or self.frame.npartitions
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:38:12,986 | INFO | profile=from_pandas_known_small_partitions iteration=2 seed=43
+2026-03-06 14:38:13,027 | ERROR | profile=from_pandas_known_small_partitions iteration=2 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_repartition.py", line 89, in _lower
+    if self.new_partitions < self.frame.npartitions:
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_reductions.py", line 471, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2421, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3551, in _divisions
+    if {df.npartitions for df in self.args} == {1}:
+                                 ^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3569, in args
+    return [op for op in dfs if not is_broadcastable(dfs, op)]
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3226, in is_broadcastable
+    and s.npartitions == 1
+        ^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_rolling.py", line 66, in npartitions
+    return self.frame.npartitions
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2231, in _divisions
+    return super()._divisions()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 803, in npartitions
+    return self.operand("npartitions") or len(self._divisions()) - 1
+                                              ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 776, in _divisions
+    if self._npartitions_input == 1:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 799, in _npartitions_input
+    return self.operand("npartitions") or self.frame.npartitions
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:38:13,030 | INFO | profile=from_pandas_known_small_partitions iteration=3 seed=44
+2026-03-06 14:38:13,071 | ERROR | profile=from_pandas_known_small_partitions iteration=3 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_repartition.py", line 89, in _lower
+    if self.new_partitions < self.frame.npartitions:
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_reductions.py", line 471, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2421, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3551, in _divisions
+    if {df.npartitions for df in self.args} == {1}:
+                                 ^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3569, in args
+    return [op for op in dfs if not is_broadcastable(dfs, op)]
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3226, in is_broadcastable
+    and s.npartitions == 1
+        ^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_rolling.py", line 66, in npartitions
+    return self.frame.npartitions
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2231, in _divisions
+    return super()._divisions()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 803, in npartitions
+    return self.operand("npartitions") or len(self._divisions()) - 1
+                                              ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 776, in _divisions
+    if self._npartitions_input == 1:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 799, in _npartitions_input
+    return self.operand("npartitions") or self.frame.npartitions
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:38:13,073 | INFO | profile=from_pandas_known_small_partitions iteration=4 seed=45
+2026-03-06 14:38:13,115 | ERROR | profile=from_pandas_known_small_partitions iteration=4 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_repartition.py", line 89, in _lower
+    if self.new_partitions < self.frame.npartitions:
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_reductions.py", line 471, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2421, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3551, in _divisions
+    if {df.npartitions for df in self.args} == {1}:
+                                 ^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3569, in args
+    return [op for op in dfs if not is_broadcastable(dfs, op)]
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3226, in is_broadcastable
+    and s.npartitions == 1
+        ^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_rolling.py", line 66, in npartitions
+    return self.frame.npartitions
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2231, in _divisions
+    return super()._divisions()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 803, in npartitions
+    return self.operand("npartitions") or len(self._divisions()) - 1
+                                              ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 776, in _divisions
+    if self._npartitions_input == 1:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 799, in _npartitions_input
+    return self.operand("npartitions") or self.frame.npartitions
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:38:13,117 | INFO | profile=from_pandas_known_small_partitions iteration=5 seed=46
+2026-03-06 14:38:13,158 | ERROR | profile=from_pandas_known_small_partitions iteration=5 failed
+Traceback (most recent call last):
+  File "C:\work\projects\dvt_dask\services\benchmarking\measurements.py", line 100, in run_profile_measurements
+    _ = pipeline.compute()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_collection.py", line 547, in compute
+    return DaskMethodsMixin.compute(self, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 377, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\base.py", line 682, in compute
+    expr = expr.optimize()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 463, in optimize
+    return optimize_until(self, stage)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 971, in optimize_until
+    expr = expr.lower_completely()
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 548, in lower_completely
+    new = expr.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 514, in lower_once
+    new = operand.lower_once(lowered)
+  File "C:\work\projects\dvt_dask\dask\_expr.py", line 501, in lower_once
+    out = expr._lower()
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_repartition.py", line 89, in _lower
+    if self.new_partitions < self.frame.npartitions:
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_reductions.py", line 471, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2421, in _divisions
+    return (None,) * (self.frame.npartitions + 1)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3551, in _divisions
+    if {df.npartitions for df in self.args} == {1}:
+                                 ^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3569, in args
+    return [op for op in dfs if not is_broadcastable(dfs, op)]
+                                    ~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 3226, in is_broadcastable
+    and s.npartitions == 1
+        ^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_rolling.py", line 66, in npartitions
+    return self.frame.npartitions
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 2231, in _divisions
+    return super()._divisions()
+           ~~~~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 608, in _divisions
+    if not self._broadcast_dep(arg):
+           ~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 599, in _broadcast_dep
+    return dep.npartitions == 1 and dep.ndim < self.ndim
+           ^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 803, in npartitions
+    return self.operand("npartitions") or len(self._divisions()) - 1
+                                              ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 776, in _divisions
+    if self._npartitions_input == 1:
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_shuffle.py", line 799, in _npartitions_input
+    return self.operand("npartitions") or self.frame.npartitions
+                                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 454, in npartitions
+    return len(self.divisions) - 1
+               ^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 439, in divisions
+    return tuple(self._divisions())
+                 ~~~~~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 229, in _divisions
+    return self._lower().divisions
+           ~~~~~~~~~~~^^
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 302, in _lower
+    left_already_partitioned = self._on_condition_alread_partitioned(left, left_on)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_merge.py", line 283, in _on_condition_alread_partitioned
+    on in expr.unique_partition_mapping_columns_from_shuffle
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 670, in unique_partition_mapping_columns_from_shuffle
+    return self.frame.unique_partition_mapping_columns_from_shuffle
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sadzip\AppData\Local\Python\pythoncore-3.13-64\Lib\functools.py", line 1025, in __get__
+    val = self.func(instance)
+  File "C:\work\projects\dvt_dask\dask\dataframe\dask_expr\_expr.py", line 1388, in unique_partition_mapping_columns_from_shuffle
+    subset = self.frame._meta[list(elem)].rename(columns=columns)
+             ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\work\projects\dvt_dask\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 6352, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"
+2026-03-06 14:38:13,162 | INFO | Benchmark completed. Results: services\benchmarking\runs\0000_20260306_143810\results.csv

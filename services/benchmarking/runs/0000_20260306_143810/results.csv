@@ -1,0 +1,6 @@
+тип источника,мин. время,макс. время,среднее время,мин. потребление памяти,макс. потребление памяти,сред. потребление памяти
+from_pandas_known_normal,nan,nan,nan,nan,nan,nan
+delayed_known_normal,nan,nan,nan,nan,nan,nan
+delayed_unknown_normal,nan,nan,nan,nan,nan,nan
+from_pandas_known_large_partitions,0.11848790000658482,0.17305720000877045,0.1321589200058952,180.66015625,200.85546875,191.275
+from_pandas_known_small_partitions,nan,nan,nan,nan,nan,nan

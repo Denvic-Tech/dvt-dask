@@ -1,0 +1,27 @@
+2026-03-06 15:03:34,311 | INFO | Benchmark run directory created: services\benchmarking\runs\0008_20260306_150334
+2026-03-06 15:03:34,372 | INFO | Running profile: from_pandas_known_normal
+2026-03-06 15:03:34,372 | INFO | profile=from_pandas_known_normal iteration=1 seed=42
+2026-03-06 15:03:35,294 | INFO | Running profile: from_pandas_known_normal_with_cb
+2026-03-06 15:03:35,294 | INFO | profile=from_pandas_known_normal_with_cb iteration=1 seed=42
+2026-03-06 15:03:35,876 | INFO | Saved callbacks artifact: services\benchmarking\runs\0008_20260306_150334\artifacts\callbacks\from_pandas_known_normal_with_cb_iter_01.json
+2026-03-06 15:03:35,876 | INFO | Running profile: delayed_known_normal
+2026-03-06 15:03:35,877 | INFO | profile=delayed_known_normal iteration=1 seed=42
+2026-03-06 15:03:36,601 | INFO | Running profile: delayed_known_normal_with_cb
+2026-03-06 15:03:36,601 | INFO | profile=delayed_known_normal_with_cb iteration=1 seed=42
+2026-03-06 15:03:37,247 | INFO | Saved callbacks artifact: services\benchmarking\runs\0008_20260306_150334\artifacts\callbacks\delayed_known_normal_with_cb_iter_01.json
+2026-03-06 15:03:37,248 | INFO | Running profile: delayed_unknown_normal
+2026-03-06 15:03:37,248 | INFO | profile=delayed_unknown_normal iteration=1 seed=42
+2026-03-06 15:03:38,204 | INFO | Running profile: delayed_unknown_normal_with_cb
+2026-03-06 15:03:38,205 | INFO | profile=delayed_unknown_normal_with_cb iteration=1 seed=42
+2026-03-06 15:03:38,838 | INFO | Saved callbacks artifact: services\benchmarking\runs\0008_20260306_150334\artifacts\callbacks\delayed_unknown_normal_with_cb_iter_01.json
+2026-03-06 15:03:38,839 | INFO | Running profile: from_pandas_known_large_partitions
+2026-03-06 15:03:38,839 | INFO | profile=from_pandas_known_large_partitions iteration=1 seed=42
+2026-03-06 15:03:39,231 | INFO | Running profile: from_pandas_known_large_partitions_with_cb
+2026-03-06 15:03:39,232 | INFO | profile=from_pandas_known_large_partitions_with_cb iteration=1 seed=42
+2026-03-06 15:03:39,600 | INFO | Saved callbacks artifact: services\benchmarking\runs\0008_20260306_150334\artifacts\callbacks\from_pandas_known_large_partitions_with_cb_iter_01.json
+2026-03-06 15:03:39,600 | INFO | Running profile: from_pandas_known_small_partitions
+2026-03-06 15:03:39,601 | INFO | profile=from_pandas_known_small_partitions iteration=1 seed=42
+2026-03-06 15:03:40,942 | INFO | Running profile: from_pandas_known_small_partitions_with_cb
+2026-03-06 15:03:40,942 | INFO | profile=from_pandas_known_small_partitions_with_cb iteration=1 seed=42
+2026-03-06 15:03:41,968 | INFO | Saved callbacks artifact: services\benchmarking\runs\0008_20260306_150334\artifacts\callbacks\from_pandas_known_small_partitions_with_cb_iter_01.json
+2026-03-06 15:03:41,970 | INFO | Benchmark completed. Results: services\benchmarking\runs\0008_20260306_150334\results.csv

@@ -1,0 +1,12 @@
+2026-03-06 14:45:36,919 | INFO | Benchmark run directory created: services\benchmarking\runs\0004_20260306_144536
+2026-03-06 14:45:37,013 | INFO | Running profile: from_pandas_known_normal
+2026-03-06 14:45:37,014 | INFO | profile=from_pandas_known_normal iteration=1 seed=42
+2026-03-06 14:45:37,276 | INFO | Running profile: delayed_known_normal
+2026-03-06 14:45:37,277 | INFO | profile=delayed_known_normal iteration=1 seed=42
+2026-03-06 14:45:37,385 | INFO | Running profile: delayed_unknown_normal
+2026-03-06 14:45:37,386 | INFO | profile=delayed_unknown_normal iteration=1 seed=42
+2026-03-06 14:45:37,493 | INFO | Running profile: from_pandas_known_large_partitions
+2026-03-06 14:45:37,494 | INFO | profile=from_pandas_known_large_partitions iteration=1 seed=42
+2026-03-06 14:45:37,632 | INFO | Running profile: from_pandas_known_small_partitions
+2026-03-06 14:45:37,633 | INFO | profile=from_pandas_known_small_partitions iteration=1 seed=42
+2026-03-06 14:45:37,961 | INFO | Benchmark completed. Results: services\benchmarking\runs\0004_20260306_144536\results.csv

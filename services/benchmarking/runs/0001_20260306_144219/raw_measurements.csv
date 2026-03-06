@@ -1,0 +1,6 @@
+тип источника,итерация,время_сек,память_min_mib,память_max_mib,память_avg_mib,успех,ошибка
+from_pandas_known_normal,1,0.12030379998032004,125.0390625,129.984375,127.796875,True,
+delayed_known_normal,1,0.1182705000101123,130.01171875,131.4296875,130.68619791666666,True,
+delayed_unknown_normal,1,0.1378283000085503,131.43359375,131.9921875,131.791015625,True,
+from_pandas_known_large_partitions,1,0.113288000022294,133.0390625,133.9921875,133.54427083333334,True,
+from_pandas_known_small_partitions,1,0.0,132.34765625,132.7734375,132.560546875,False,"KeyError: ""None of [Index(['lookup_key', 'event_day', 'bucket'], dtype='str')] are in the [columns]"""
