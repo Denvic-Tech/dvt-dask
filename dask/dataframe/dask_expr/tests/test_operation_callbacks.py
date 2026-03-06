@@ -4,12 +4,13 @@ import threading
 
 import pytest
 
-from dask.dataframe.dask_expr import concat, from_pandas, merge
+from dask.dataframe.dask_expr import concat, from_delayed, from_pandas, merge
 from dask.dataframe.dask_expr._operation_callbacks import (
     build_operation_callbacks_spec,
     collect_operation_callbacks_specs,
 )
 from dask.dataframe.dask_expr.tests._util import _backend_library, assert_eq
+from dask.delayed import delayed
 
 pd = _backend_library()
 
@@ -401,6 +402,102 @@ def test_add_callbacks_chainable_api_on_error():
     assert marker == "bad_predicate"
     assert exc_name == "KeyError"
     assert isinstance(columns, tuple)
+
+
+@pytest.mark.parametrize(
+    ("name", "builder"),
+    [
+        (
+            "from_pandas",
+            lambda pdf: from_pandas(pdf, npartitions=2),
+        ),
+        (
+            "from_delayed_verify_meta_false",
+            lambda pdf: from_delayed(
+                [
+                    delayed(lambda df: df.iloc[:2])(pdf),
+                    delayed(lambda df: df.iloc[2:])(pdf),
+                ],
+                meta=pdf.iloc[:0],
+                verify_meta=False,
+            ),
+        ),
+    ],
+)
+def test_add_callbacks_chainable_api_source_only(name, builder):
+    pdf = pd.DataFrame({"a": [1, 2, 3, 4]})
+    ddf = builder(pdf)
+
+    events = {"start": 0, "end": 0, "partition": []}
+
+    def on_start(_ddf_meta, operation_id):
+        assert operation_id == f"source_only_{name}"
+        events["start"] += 1
+
+    def on_end(_ddf_meta, operation_id):
+        assert operation_id == f"source_only_{name}"
+        events["end"] += 1
+
+    def on_partition(_partition, operation_id, partition_info):
+        assert operation_id == f"source_only_{name}"
+        events["partition"].append(
+            (partition_info["number"], partition_info["partition_count"], partition_info["stage"])
+        )
+
+    ddf = ddf.add_callbacks(
+        on_start=on_start,
+        on_end=on_end,
+        on_partition=on_partition,
+        operation_id=f"source_only_{name}",
+    )
+    result = ddf.compute(scheduler="threads")
+
+    assert_eq(result, pdf)
+    assert events["start"] == 1
+    assert events["end"] == 1
+    assert len(events["partition"]) == 2
+    assert {p[0] for p in events["partition"]} == {0, 1}
+    assert {p[1] for p in events["partition"]} == {2}
+    assert all(p[2] == "finish" for p in events["partition"])
+
+
+def test_add_callbacks_chainable_api_map_partitions():
+    pdf = pd.DataFrame({"a": [1, 2, 3, 4]})
+    base = from_pandas(pdf, npartitions=2)
+    meta = pd.DataFrame({"a": pd.Series(dtype="int64"), "b": pd.Series(dtype="int64")})
+
+    events = {"start": 0, "end": 0, "partition": []}
+
+    def on_start(_ddf_meta, operation_id):
+        assert operation_id == "map_partitions_cb"
+        events["start"] += 1
+
+    def on_end(_ddf_meta, operation_id):
+        assert operation_id == "map_partitions_cb"
+        events["end"] += 1
+
+    def on_partition(_partition, operation_id, partition_info):
+        assert operation_id == "map_partitions_cb"
+        events["partition"].append(
+            (partition_info["number"], partition_info["partition_count"], partition_info["stage"])
+        )
+
+    ddf = base.map_partitions(lambda df: df.assign(b=df["a"] * 2), meta=meta).add_callbacks(
+        on_start=on_start,
+        on_end=on_end,
+        on_partition=on_partition,
+        operation_id="map_partitions_cb",
+    )
+    result = ddf.compute(scheduler="threads")
+
+    expected = pdf.assign(b=pdf["a"] * 2)
+    assert_eq(result, expected)
+    assert events["start"] == 1
+    assert events["end"] == 1
+    assert len(events["partition"]) == 2
+    assert {p[0] for p in events["partition"]} == {0, 1}
+    assert {p[1] for p in events["partition"]} == {2}
+    assert all(p[2] == "finish" for p in events["partition"])
 
 
 def test_operation_callback_specs_survive_optimization_and_skip_fusion():

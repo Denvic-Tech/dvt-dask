@@ -71,6 +71,10 @@ from dask.utils import (
 optimize = core.optimize
 
 
+def _identity(value):
+    return value
+
+
 class Expr(core.SingletonExpr):
     """Primary class for all Expressions
 
@@ -759,6 +763,7 @@ class MapPartitions(Blockwise):
     def _task(self, name: Key, index: int) -> Task:
         args = [self._blockwise_arg(op, index) for op in self.args]
         kwargs = dict(self.kwargs if self.kwargs is not None else {})
+        op_meta = self._operation_meta(index)
         if self._has_partition_info:
             kwargs["partition_info"] = {
                 "number": index,
@@ -772,12 +777,13 @@ class MapPartitions(Blockwise):
                     "_meta": self._meta,
                 }
             )
-            return Task(name, apply_and_enforce, *args, **kwargs)
+            return Task(name, apply_and_enforce, *args, op_meta=op_meta, **kwargs)
         else:
             return Task(
                 name,
                 self.func,
                 *args,
+                op_meta=op_meta,
                 **kwargs,
             )
 
@@ -3112,7 +3118,30 @@ class PartitionsFiltered(Expr):
         return super().npartitions
 
     def _task(self, name: Key, index: int) -> Task:
-        return self._filtered_task(name, self._partitions[index])
+        task = self._filtered_task(name, self._partitions[index])
+        op_meta = self._operation_meta(index)
+        if op_meta is None:
+            return task
+
+        if isinstance(task, Task):
+            if task.op_meta is not None and task.op_meta != op_meta:
+                raise RuntimeError(
+                    f"Conflicting operation metadata for task {name!r}: "
+                    f"{task.op_meta!r} != {op_meta!r}"
+                )
+            task.op_meta = op_meta
+            return task
+
+        if isinstance(task, Alias):
+            return Task(name, _identity, TaskRef(task.target), op_meta=op_meta)
+
+        if isinstance(task, DataNode):
+            return Task(name, _identity, task.value, _data_producer=True, op_meta=op_meta)
+
+        raise RuntimeError(
+            "Cannot attach operation metadata to a non-runnable partition task "
+            f"for {name!r}: {type(task).__name__}"
+        )
 
     def _filtered_task(self, name: Key, index: int) -> Task:
         raise NotImplementedError()
