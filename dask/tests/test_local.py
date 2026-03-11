@@ -279,8 +279,53 @@ def test_operation_event_duplicate_partition_raises():
         ),
     }
 
-    with pytest.raises(RuntimeError, match="Duplicate partition_event"):
+    with pytest.raises(RuntimeError, match="observed 1 unique partition_event values; expected 2"):
         get_sync(dsk, [("x", 0), ("x", 1)])
+
+
+def test_operation_event_normalizes_task_count_and_coalesces_helper_tasks():
+    events = []
+    dsk = {
+        ("x", 0): Task(
+            ("x", 0),
+            lambda: 1,
+            op_meta=OperationMeta(
+                operation_id="op-normalized",
+                operation_type="test",
+                partition_idx=0,
+                partition_count=1,
+                operation_task_count=1,
+            ),
+        ),
+        ("x", 1): Task(
+            ("x", 1),
+            lambda: 2,
+            op_meta=OperationMeta(
+                operation_id="op-normalized",
+                operation_type="test",
+                partition_idx=0,
+                partition_count=1,
+                operation_task_count=1,
+            ),
+        ),
+    }
+
+    with Callback(
+        operation_start=lambda op_meta, *_: events.append(
+            ("start", op_meta.operation_id, op_meta.operation_task_count)
+        ),
+        partition_event=lambda op_meta, *_: events.append(("partition", op_meta.partition_idx)),
+        operation_end=lambda op_meta, *_: events.append(
+            ("end", op_meta.operation_id, op_meta.operation_task_count)
+        ),
+    ):
+        assert get_sync(dsk, [("x", 0), ("x", 1)]) == (1, 2)
+
+    assert events == [
+        ("start", "op-normalized", 2),
+        ("partition", 0),
+        ("end", "op-normalized", 2),
+    ]
 
 
 def test_operation_error_hook():

@@ -110,6 +110,7 @@ See the function ``inline_functions`` for more information.
 from __future__ import annotations
 
 import os
+from dataclasses import replace
 from collections import defaultdict
 from collections.abc import Callable, Mapping, Sequence
 from concurrent.futures import Executor, Future
@@ -405,6 +406,30 @@ def _resolve_operation_meta_for_key(
     return getattr(node, "op_meta", None)
 
 
+def _count_operation_tasks(dsk: Mapping[Key, object]) -> dict[Any, int]:
+    counts: dict[Any, int] = defaultdict(int)
+    for node in dsk.values():
+        op_meta = getattr(node, "op_meta", None)
+        if op_meta is None:
+            continue
+        counts[op_meta.operation_id] += 1
+    return counts
+
+
+def _normalize_operation_meta_task_count(
+    op_meta: OperationMeta,
+    operation_task_counts: Mapping[Any, int] | None,
+) -> OperationMeta:
+    if operation_task_counts is None:
+        return op_meta
+
+    actual_count = operation_task_counts.get(op_meta.operation_id)
+    if actual_count is None or actual_count == op_meta.operation_task_count:
+        return op_meta
+
+    return replace(op_meta, operation_task_count=actual_count)
+
+
 def _get_or_create_operation_state(
     operation_states: dict,
     op_meta: OperationMeta,
@@ -496,14 +521,10 @@ def _operation_on_posttask(
         )
 
     partition_idx = op_meta.partition_idx
-    if partition_idx in op_state["seen_partitions"]:
-        raise RuntimeError(
-            f"Duplicate partition_event for operation_id={op_meta.operation_id!r}, "
-            f"partition_idx={partition_idx}"
-        )
-    op_state["seen_partitions"].add(partition_idx)
-    for cb in partition_event_cbs:
-        cb(op_meta, dsk, state)
+    if partition_idx not in op_state["seen_partitions"]:
+        op_state["seen_partitions"].add(partition_idx)
+        for cb in partition_event_cbs:
+            cb(op_meta, dsk, state)
 
     op_state["remaining"] -= 1
     if op_state["remaining"] < 0:
@@ -726,6 +747,7 @@ def get_async(
         started_cbs = []
         operation_states = {}
         operation_meta_cache = {}
+        operation_task_counts = None
         task_pack_exception = pack_exception
         if operation_error_cbs:
 
@@ -752,6 +774,13 @@ def get_async(
             state = start_state_from_dask(
                 dsk, keys=results, cache=cache, sortkey=keyorder.get
             )
+            if (
+                operation_start_cbs
+                or partition_event_cbs
+                or operation_end_cbs
+                or operation_error_cbs
+            ):
+                operation_task_counts = _count_operation_tasks(dsk)
 
             for _, start_state, *_ in callbacks:
                 if start_state:
@@ -765,12 +794,18 @@ def get_async(
 
             def get_operation_meta(key):
                 if key not in operation_meta_cache:
-                    operation_meta_cache[key] = _resolve_operation_meta_for_key(
+                    op_meta = _resolve_operation_meta_for_key(
                         key,
                         dsk,
                         operation_metadata_provider,
                         operation_metadata_by_key,
                     )
+                    if op_meta is not None:
+                        op_meta = _normalize_operation_meta_task_count(
+                            op_meta,
+                            operation_task_counts,
+                        )
+                    operation_meta_cache[key] = op_meta
                 return operation_meta_cache[key]
 
             def fire_tasks(chunksize):
