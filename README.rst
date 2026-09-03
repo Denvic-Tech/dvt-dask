@@ -1,6 +1,13 @@
 Dask
 ====
 
+DVT Fork
+--------
+
+This repository is the Denvic-maintained DVT fork of upstream `Dask <https://github.com/dask/dask>`__.
+It is published as ``dvt-dask`` and carries DVT-specific scheduling and operation-callback integrations.
+Upstream Dask history is intentionally preserved so changes can continue to be synchronized with the original project.
+
 |Build Status| |Coverage| |Doc Status| |Discourse| |Version Status| |NumFOCUS|
 
 Dask is a flexible parallel computing library for analytics.  See
